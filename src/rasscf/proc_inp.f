@@ -135,6 +135,9 @@ C   No changing about read in orbital information from INPORB yet.
       max_canonical = max_sweep*5
 #endif
 
+! Quan.17: Dice default flags
+      doDice=.false.
+
 
 * Orbital-free embedding
       Do_OFemb=.false.
@@ -2688,7 +2691,17 @@ c       write(6,*)          '  --------------------------------------'
       End If
 #endif
 
+*---  Process DICE command --------------------------------------------*
+#ifdef _DICE_
+      If (KeyDICE) Then
+       DoDice=.True.
+       Write(6,*) 'DICE> semistochastic heat bath configuration ',
+     & 'interaction (SHCI)'
+       Call SetPos(LUInput,'DICE',Line,iRc)
+       Call ChkIfKey()
+      End If
 #endif
+
 *---  All keywords have been processed ------------------------------*
 
 ************************************************************************
@@ -2894,7 +2907,7 @@ C Test read failed. JOBOLD cannot be used.
 *
 *     In DMRG-CASSCF, skip GUGA and LUCIA settings
       NCONF=1
-      If(DoBlockDMRG) GoTo 9000
+      If(DoBlockDMRG .OR. DoDice) GoTo 9000
 * ===============================================================
 *
 *     Construct the Guga tables

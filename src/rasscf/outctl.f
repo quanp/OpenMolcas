@@ -165,6 +165,16 @@ C Local print level (if any)
       Call CollapseOutput(0,'Orbital specifications:')
       Write(LF,*)
 
+#ifdef _DICE_
+      if(.Not.DoDice) GoTo 113
+      Line=' '
+      Write(Line(left-2:),'(A)') 'DICE specifications:'
+      Call CollapseOutput(1,Line)
+      Write(LF,Fmt1)'--------------------------'
+      Write(LF,*)
+      Write(LF,Fmt2//'A,T45,L6)')'Using DICE',DoDice
+#endif
+
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
       If(.Not.DoBlockDMRG) GoTo 113
 
