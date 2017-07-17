@@ -127,6 +127,7 @@ C   No changing about read in orbital information from INPORB yet.
 ! Quan.16: CheMPS2 default flags
       chemps2_restart=.false.
       chemps2_lrestart=0
+      chemps2_can=.true.
       davidson_tol = 1.0d-7
       chemps2_blb = 0.5d-2
       max_sweep = 8
@@ -2601,9 +2602,9 @@ c       write(6,*)          '  --------------------------------------'
 #ifdef _ENABLE_CHEMPS2_DMRG_
        iOrbTyp = 2
        IPT2 = 1
-       Write(6,*)
-     & 'CHEMPS2> 3-RDM and F4-RDM require PseudoCanonical orbitals'
-       Write(6,*) 'CHEMPS2> Automatically set: OUTOrbitals = CANOnical'
+*       Write(6,*) 'CHEMPS2> 3-RDM and F4-RDM require',
+*     &            ' PseudoCanonical orbitals as default'
+*       Write(6,*) 'CHEMPS2> Automatically set: OUTOrbitals = CANOnical'
 #endif
        Call SetPos(LUInput,'3RDM',Line,iRc)
        Call ChkIfKey()
@@ -2617,6 +2618,18 @@ c       write(6,*)          '  --------------------------------------'
        ReadStatus=' Failure reading data after DAVT keyword.'
        Read(LUInput,*,End=9910,Err=9920) davidson_tol
        ReadStatus=' O.K. after reading data after DAVT keyword.'
+       Call ChkIfKey()
+      End If
+*---  Process CHNO command --------------------------------------------*
+      If (KeyCHNO) Then
+       If (DBG) Then
+         Write(6,*) ' Using non-canonical orbitals in CheMPS2',
+     &   ' (experimental)'
+       End If
+       iOrbTyp = 1
+       IPT2 = 0
+       chemps2_can = .false.
+       Call SetPos(LUInput,'CHNO',Line,iRc)
        Call ChkIfKey()
       End If
 *---  Process CHRE command --------------------------------------------*

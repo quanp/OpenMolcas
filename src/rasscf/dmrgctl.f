@@ -274,7 +274,11 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
 #ifdef _ENABLE_BLOCK_DMRG_
           Call BlockCtl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
 #elif _ENABLE_CHEMPS2_DMRG_
-          Call Chemps2Ctl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
+          if (chemps2_can.EQV..True.) then
+            Call Chemps2Ctl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
+          else
+            Call Chemps2Ctl_nocan(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
+          endif
 #endif
 
           Call GetMem('TmpTUVX','Free','Real',ipTmpTUVX,NACPR2)
@@ -283,7 +287,11 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
 #ifdef _ENABLE_BLOCK_DMRG_
           Call BlockCtl(Work(LW1),TUVX,IFINAL,IRst)
 #elif _ENABLE_CHEMPS2_DMRG_
-          Call Chemps2Ctl(Work(LW1),TUVX,IFINAL,IRst)
+          if (chemps2_can.EQV..True.) then
+            Call Chemps2Ctl(Work(LW1),TUVX,IFINAL,IRst)
+          else
+            Call Chemps2Ctl_nocan(Work(LW1),TUVX,IFINAL,IRst)
+          endif
 #endif
         End If
       endif

@@ -85,6 +85,10 @@
 #ifndef _DMRG_
       logical :: doDMRG = .false.
 #endif
+
+#ifdef _ENABLE_CHEMPS2_DMRG_
+      Integer iChMolpro(8)
+#endif
       ipDMAT=ip_Dummy
       nDMAT = 1
 
@@ -281,8 +285,90 @@ C         If(ipDMAT.ne.ip_Dummy) Call Free_Work(ipDMAT)
       IF(IPRLEV.GE.DEBUG) THEN
         Write(LF,3333)WORD,LFOCK,LBM,LP,LQ
       END IF
+      IF(IPRLEV.GE.DEBUG) THEN
+        Write(LF,*)
+        Write(LF,*)'FA in MO-basis before FOCK'
+        Write(LF,*) ' --------------'
+        Write(LF,*)
+        iOff = 1
+        Do iSym = 1,nSym
+          iOrb = nOrb(iSym)
+          Call TriPrt(' ',' ',FA(iOff),iOrb)
+          iOff = iOff + (iOrb*iOrb+iOrb)/2
+        End Do
+      END IF
+      IF(IPRLEV.GE.DEBUG) THEN
+        Write(LF,*)
+        Write(LF,*)'FI in MO-basis before FOCK'
+        Write(LF,*) ' --------------'
+        Write(LF,*)
+        iOff = 1
+        Do iSym = 1,nSym
+          iOrb = nOrb(iSym)
+          Call TriPrt(' ',' ',FI(iOff),iOrb)
+          iOff = iOff + (iOrb*iOrb+iOrb)/2
+        End Do
+      END IF
       CALL FOCK(WORK(LFOCK),WORK(LBM),FI,FA,
      &          D,WORK(LP),WORK(LQ),WORK(LPUVX),IFINAL,CMO)
+
+#ifdef _ENABLE_CHEMPS2_DMRG_
+* Quan17: Write FOCK_CHEMPS2 in the last iteration
+      if (IFINAL.EQ.1) then
+      norbtot = 0
+      do iiash=1,nSym
+        norbtot = norbtot + nAsh(iiash)
+      enddo
+
+* Get character table to convert MOLPRO symmetry format
+      Call MOLPRO_ChTab_BIS(nSym,Label,iChMolpro)
+
+* Convert orbital symmetry into MOLPRO format
+      Call Getmem('OrbSym','Allo','Inte',lOrbSym,NAC)
+      iOrb=1
+      Do iSym=1,nSym
+        Do jOrb=1,NASH(iSym)
+          iWork(lOrbSym+iOrb-1)=iChMolpro(iSym)
+          iOrb=iOrb+1
+        End Do
+      End Do
+      lSymMolpro=iChMolpro(lSym)
+
+      LuFCK=isFreeUnit(27)
+      call molcas_open(LuFCK,'FOCK_CHEMPS2')
+      write(LuFCK,'(1X,A12,I2,A1)') '&FOCK NACT= ', norbtot,','
+      write(LuFCK,'(2X,A7)',ADVANCE = "NO") 'ORBSYM='
+      do iOrb=1,norbtot
+        write(LuFCK,'(I1,A1)',ADVANCE = "NO") iWork(lOrbSym+iOrb-1),','
+      enddo
+      write(LuFCK,*)
+      write(LuFCK,*) '/'
+      Call Getmem('OrbSym','Free','Inte',lOrbSym,NAC)
+
+      iOff = 1
+      iOrb2 = 0
+      Do iSym = 1,nSym
+        iOrb = nOrb(iSym)
+        do ii=1,NASH(ISYM)
+          do jj=1,ii
+            iIA = nish(isym) + ii
+            iOff2 = (iOff-1) + iIA*(iIA+1)/2 - (ii-jj)
+            write(LuFCK,'(1X,E23.16E2,I4,I4)')
+     &                               FA(iOff2), ii+iOrb2, jj+iOrb2
+            if (ii.NE.jj) then
+              write(LuFCK,'(1X,E23.16E2,I4,I4)')
+     &                               FA(iOff2), jj+iOrb2, ii+iOrb2
+            endif
+          enddo
+        enddo
+        iOff = iOff + (iOrb*iOrb+iOrb)/2
+        iOrb2 = iOrb2 + NASH(ISYM)
+      End Do
+
+      close(LuFCK)
+      endif
+#endif
+
 c Now FA = FI + FA. Original FA has been overwritten in FOCK routine.
       IF(IPRLEV.GE.DEBUG) THEN
         Write(LF,*)

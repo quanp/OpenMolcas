@@ -266,6 +266,14 @@ C.. for GAS
      &                           Do3RDM
       Write(LF,Fmt2//'A,T45,I6)')'Restart scheme in 3-RDM and F.4-RDM',
      &                           chemps2_lrestart
+      if ((chemps2_can.EQV..True.) .and. (Do3RDM.EQV..True.)) then
+        Write(LF,Fmt2//'A,T45)')
+     & 'Using pseudocanonical in 3-RDM and F.4-RDM'
+      elseif ((chemps2_can.EQV..False.) .and. (Do3RDM.EQV..True.)) then
+        Write(LF,Fmt2//'A,T45)')
+     & 'Using non-pseudocanonical in 3-RDM and F.4-RDM'
+      endif
+
 #endif
 
 * NN.14 FIXME: haven't yet checked whether geometry opt. works correctly with DMRG

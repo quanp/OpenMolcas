@@ -164,6 +164,8 @@ C are not supported with stdalloc. Hence, the infraction.
       Logical :: RHSD = .False.
       ! CUMU
       Logical :: DoCumulant = .False.
+      ! CHTR
+      Logical :: DoTranRDM = .False.
       End Type
 
 #ifdef ALLOC_SCAL
@@ -565,6 +567,9 @@ C as if the values were read directly from the file.
 !Quan: FIXME: nStates not defined
 !       Call Quit_OnUserError
 !      endif
+
+      Case('CHTR')
+      Input % DoTranRDM = .True.
 #endif
 
       Case('EFFE')

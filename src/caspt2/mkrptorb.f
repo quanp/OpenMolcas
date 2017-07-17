@@ -47,7 +47,7 @@ C     indices
 C     work-array pointers
       INTEGER LCI,LCMO2,LFOCK
       INTEGER NFOCK,NFES
-#ifdef _ENABLE_BLOCK_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || _ENABLE_CHEMPS2_DMRG_
       INTEGER LXMAT,NXMAT
 #endif
 C     #orbitals per symmetry
@@ -288,8 +288,26 @@ C Finally, loop again over symmetries, transforming the CI:
         END IF
 #elif _ENABLE_CHEMPS2_DMRG_
         ELSE
-          write(6,*) 'CHEMPS2> MKRPTORB assumes '//
-     & 'PSEUDOCANONICAL orbitals!'
+          if (DoTranRDM.EQV..True.) then
+            write(6,*) 'CHEMPS2> Transform RDMs into '//
+     &                         'pseudocanonical basis'
+            NXMAT=NASHT**2
+            CALL GETMEM('XMAT','ALLO','REAL',LXMAT,NXMAT)
+            CALL DCOPY_(NXMAT,0.0D0,0,WORK(LXMAT),1)
+            CALL MKXMAT_BIS(TORB,WORK(LXMAT))
+
+            CALL chemps2_tran2pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE))
+            CALL chemps2_tran3pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE),
+     &                            .TRUE.)
+            CALL chemps2_tran3pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE),
+     &                           .FALSE.)
+            CALL GETMEM('XMAT','FREE','REAL',LXMAT,NXMAT)
+
+          else
+            write(6,*) 'CHEMPS2> CheMPS2 assumes '//
+     &                         'pseudocanonical orbitals'
+          endif
+
         END IF
 #endif
       END IF
