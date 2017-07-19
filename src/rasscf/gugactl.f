@@ -102,7 +102,7 @@ C
         NCONF=0
         Goto 100
       End If
-      If ( doBlockDMRG ) then
+      If ( doBlockDMRG .OR. doDice ) then
         NCONF=1
         Goto 100
       End If

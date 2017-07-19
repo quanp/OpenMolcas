@@ -136,8 +136,9 @@ C   No changing about read in orbital information from INPORB yet.
 #endif
 
 ! Quan.17: Dice default flags
-      doDice=.false.
-
+      doDice = .false.
+      Dice_stoc = .false.
+      nref_dice = 1
 
 * Orbital-free embedding
       Do_OFemb=.false.
@@ -2691,13 +2692,40 @@ c       write(6,*)          '  --------------------------------------'
       End If
 #endif
 
-*---  Process DICE command --------------------------------------------*
+#endif
+
 #ifdef _DICE_
+*---  Process DICE command --------------------------------------------*
       If (KeyDICE) Then
        DoDice=.True.
-       Write(6,*) 'DICE> semistochastic heat bath configuration ',
+       Write(6,*) 'DICE> (semistochastic) heat bath configuration ',
      & 'interaction (SHCI)'
        Call SetPos(LUInput,'DICE',Line,iRc)
+       Call ChkIfKey()
+      End If
+*---  Process STOC command --------------------------------------------*
+      If (KeySTOC) Then
+       Dice_Stoc=.True.
+       Write(6,*) 'DICE> Using semistochastic algorithm',
+     & 'interaction (SHCI)'
+       Call SetPos(LUInput,'STOC',Line,iRc)
+       Call ChkIfKey()
+      End If
+*---  Process HFOC command --------------------------------------------*
+      HFOCC = ''
+      If (KeyHFOC) Then
+       Call SetPos(LUInput,'HFOC',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after HFOC keyword.'
+       Read(LUInput,*,End=9910,Err=9920) nref_dice
+       do iref_dice=1,nref_dice
+          Read(LUInput,*,End=9910,Err=9920) hfocc(iref_dice)
+       enddo
+       ReadStatus=' O.K. after reading data after HFOC keyword.'
+*       write(6,*) 'DICE: DB> NREF_DICE', nref_dice
+*       do iref_dice=1,nref_dice
+*          write(6,*) 'DICE: DB> HFOCC', hfocc(iref_dice)
+*       enddo
        Call ChkIfKey()
       End If
 #endif

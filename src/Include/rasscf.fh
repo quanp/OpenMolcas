@@ -60,6 +60,9 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
+#ifdef _DICE_
+     &                ,nref_dice
+#endif
       COMMON/INTINP/  LROOTS,ICICH,IDIAG,ICIRST,KAVER,KSYM,MAXJT,
      &                IXSYM,IPRSEC,MAXORBOUT,
      &                ICI,JCJ,
@@ -73,6 +76,9 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
+#ifdef _DICE_
+     &                ,nref_dice
+#endif
 *
       Logical         RFpert,lSquare, Start_Vectors, NonEq, DoFaro
      &                ,DOFCIDUMP,DoBlockDMRG,DoDice
@@ -82,6 +88,9 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                , chemps2_restart, chemps2_can
 #endif
+#ifdef _DICE_
+     &                , dice_stoc
+#endif
       COMMON/LOGINP/  RFpert,lSquare, Start_Vectors, NonEq, DoFaro
      &                ,DOFCIDUMP,DoBlockDMRG, DoDice
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
@@ -90,6 +99,9 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                , chemps2_restart, chemps2_can
 #endif
+#ifdef _DICE_
+     &                , dice_stoc
+#endif
 *
       REAL*8          PRWTHR,POTNUC,CCI,
      &                ECAS1,RLXGRD,EVAC
@@ -97,8 +109,9 @@
       COMMON/RELINP/  PRWTHR,POTNUC,CCI(mxRoot,mxRef),
      &                TITLE,ECAS1,RLXGRD,EVAC
 *
+      Character(100)  HFOCC(20)
       Character(8)    IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY
-      COMMON/CHRINP/  IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY
+      COMMON/CHRINP/  IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY,HFOCC
 *
       INTEGER         iCIonly,NSM(mxOrb),KTIGHT
       COMMON/INTCI/   iCIonly,NSM,KTIGHT

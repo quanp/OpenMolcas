@@ -706,8 +706,8 @@ c At this point all is ready to potentially dump MO integrals... just do it if r
 *
         Call Timing(Swatch,Swatch,Zenith_1,Swatch)
 
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
-            If(DoBlockDMRG) Then
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
+            If(DoBlockDMRG .OR. DoDice) Then
               CALL DMRGCTL(WORK(LCMO),
      &                 WORK(LDMAT),WORK(LDSPN),WORK(LPMAT),WORK(LPA),
      &                 WORK(LFI),WORK(LD1I),WORK(LD1A),
@@ -773,7 +773,7 @@ c At this point all is ready to potentially dump MO integrals... just do it if r
         end if
 #endif
 
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
             End If
 #endif
         If ( IPRLEV.ge.DEBUG ) then
@@ -999,8 +999,8 @@ c.. upt to here, jobiph are all zeros at iadr15(2)
          End If
 
         Call Timing(Swatch,Swatch,Zenith_1,Swatch)
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
-        If(DoBlockDMRG) Then
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
+        If(DoBlockDMRG .OR. doDice) Then
           CALL DMRGCTL(WORK(LCMO),
      &           WORK(LDMAT),WORK(LDSPN),WORK(LPMAT),WORK(LPA),
      &           WORK(LFI),WORK(LD1I),WORK(LD1A),
@@ -1035,7 +1035,7 @@ c.. upt to here, jobiph are all zeros at iadr15(2)
 #ifdef _NECI_
       end if
 #endif
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
       End If
 #endif
 c      call triprt('twxy',' ',WORK(LTUVX),nAc*(nAc+1)/2)
@@ -1631,8 +1631,8 @@ c Clean-close as much as you can the CASDFT stuff...
 *
       Call Timing(Swatch,Swatch,Zenith_1,Swatch)
 
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
-      If(DoBlockDMRG) Then
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
+      If(DoBlockDMRG .OR. doDice) Then
         CALL DMRGCTL(WORK(LCMO),
      &           WORK(LDMAT),WORK(LDSPN),WORK(LPMAT),WORK(LPA),
      &           WORK(LFI),WORK(LD1I),WORK(LD1A),
@@ -1654,7 +1654,7 @@ c Clean-close as much as you can the CASDFT stuff...
 #ifdef _NECI_
       end if
 #endif
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
       End If
 #endif
 ! Now disable it at least for DMRG
@@ -1843,7 +1843,7 @@ c deallocating detorb... allocated in proc_inp.f used throughout the iterations
 
 *
 * Skip Lucia stuff if NECI or BLOCK-DMRG is on
-      If(.not.(iDoNECI.or.doDMRG.or.doBlockDMRG)) then
+       If(.not.(iDoNECI.or.doDMRG.or.doBlockDMRG.or.doDice)) then
           Call Lucia_Util('CLOSE',iDummy,iDummy,Dummy)
        end if
        if(iDoNECI) then
@@ -1906,7 +1906,8 @@ c      End If
          EndIf
       EndIf
 
-      if(.not.(iDoGas.or.doDMRG.or.doBlockDMRG.or.iDoNeci)) then
+      if(.not.(iDoGas.or.doDMRG.or.doBlockDMRG.or.iDoNeci.or.doDice))
+     &                                                           then
         Call MKGUGA_FREE
       end if
 

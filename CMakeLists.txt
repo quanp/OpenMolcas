@@ -103,6 +103,7 @@ option (FDE "Enable Frozen-density-embedding (FDE) interface." OFF)
 option (GROMACS "Compile Gromacs interface." OFF)
 option (BLOCK "Activate BLOCK-DMRG support." OFF)
 option (CHEMPS2 "Activate CheMPS2-DMRG support." OFF)
+option (DICE "Activate DICE-SHCI support." OFF)
 
 option (GPERFTOOLS "Activate gperftools CPU profiling." OFF)
 option (GCOV "Activate code coverage profiling (use with Debug/-O0)." OFF)
@@ -1464,6 +1465,35 @@ else ()
         message ("CHEMPS2 interface DISABLED")
 endif ()
 
+# SHCI (DICE code) support
+#=======================================
+
+if (DICE)
+        mark_as_advanced(CLEAR DICE_DIR)
+
+        message ("Configuring DICE-SHCI support:")
+
+        set (DICE_DIR ${DICE_DIR} CACHE PATH "DICE installation path." FORCE)
+        if ("${DICE_DIR}" STREQUAL "")
+          message (FATAL_ERROR "You must supply a path for DICE_DIR.")
+        endif ()
+        
+        if (EXISTS ${DICE_DIR}/Dice)
+                foreach (prog
+                        rasscf
+                        )
+                        list (APPEND ${prog}_defs "_DICE_")
+                endforeach ()
+                message ("-- DICE_DIR: ${DICE_DIR}")
+        else ()
+                message (FATAL ERROR "No DICE installation found at ${DICE_DIR}")
+        endif ()
+
+else ()
+        mark_as_advanced(FORCE DICE_DIR)
+        message ("DICE interface DISABLED")
+endif ()
+
 if (BLOCK AND CHEMPS2)
         message (FATAL_ERROR "BLOCK and CHEMPS2 options are not compatible.")
 endif ()
@@ -1887,6 +1917,7 @@ list (REMOVE_ITEM utils
         blas_util
         block_dmrg_util
         chemps2_util
+        dice_util
         delayed_util
         dga_util
         embedding_util
@@ -2020,6 +2051,17 @@ if (CHEMPS2)
                 list (APPEND utils ${util})
                 list (APPEND ${util}_incs ${HDF5_INCLUDE_DIRS})
                 list (APPEND ${util}_defs "_ENABLE_CHEMPS2_DMRG_")
+        else ()
+                message (FATAL_ERROR "\"${util}\" not found in source directories")
+        endif ()
+endif ()
+
+if (DICE)
+        set (util dice_util)
+        find_source(${util})
+        if (DEFINED ${util}_src)
+                list (APPEND utils ${util})
+                list (APPEND ${util}_defs "_DICE_")
         else ()
                 message (FATAL_ERROR "\"${util}\" not found in source directories")
         endif ()

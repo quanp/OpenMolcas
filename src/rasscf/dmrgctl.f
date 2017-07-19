@@ -10,7 +10,7 @@
 *                                                                      *
 * Copyright (C) Naoki Nakatani                                         *
 ************************************************************************
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
       Subroutine DMRGCtl(CMO,D,DS,P,PA,FI,D1I,D1A,TUVX,IFINAL,IRst)
 * ***********************************************************
 *
@@ -187,6 +187,9 @@ C Local print level (if any)
 #elif _ENABLE_CHEMPS2_DMRG_
                  CALL chemps2_densi_rasscf(IPCMRoot,Work(LW6),Work(LW7),
      &                                 Work(LW8),Work(LW9),Work(LW10))
+#elif _DICE_
+                 CALL dice_densi_rasscf(IPCMRoot,Work(LW6),Work(LW7),
+     &                                 Work(LW8),Work(LW9),Work(LW10))
 #endif
 
 * NN.14 NOTE: IFCAS must be 0 for DMRG-CASSCF
@@ -259,7 +262,7 @@ c          If(n_unpaired_elec+n_paired_elec/2.eq.nac) n_Det=1
 C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
       kh0_pointer = lw1
       if(IfVB.eq.1)then
-* NN.14 FIXME: I'm not sure whether this option should work?
+* NN.14 FIXME: Im not sure whether this option should work?
         call cvbmn_rvb(max(ifinal,1))
       else
         If (KSDFT(1:3).ne.'SCF'.
@@ -279,6 +282,8 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
           else
             Call Chemps2Ctl_nocan(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
           endif
+#elif _DICE_
+          Call DiceCtl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
 #endif
 
           Call GetMem('TmpTUVX','Free','Real',ipTmpTUVX,NACPR2)
@@ -292,6 +297,8 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
           else
             Call Chemps2Ctl_nocan(Work(LW1),TUVX,IFINAL,IRst)
           endif
+#elif _DICE_
+          Call DiceCtl(Work(LW1),TUVX,IFINAL,IRst)
 #endif
         End If
       endif
@@ -335,6 +342,9 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
 #elif _ENABLE_CHEMPS2_DMRG_
           CALL chemps2_densi_rasscf(jRoot,Work(LW6),Work(LW7),
      &                              Work(LW8),Work(LW9),Work(LW10))
+#elif _DICE_
+          CALL dice_densi_rasscf(jRoot,Work(LW6),Work(LW7),
+     &                            Work(LW8),Work(LW9),Work(LW10))
 #endif
           CALL GETMEM('PTscr','FREE','REAL',LW10,NACT4)
         EndIf

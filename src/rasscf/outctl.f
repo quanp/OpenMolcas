@@ -170,9 +170,17 @@ C Local print level (if any)
       Line=' '
       Write(Line(left-2:),'(A)') 'DICE specifications:'
       Call CollapseOutput(1,Line)
-      Write(LF,Fmt1)'--------------------------'
+      Write(LF,Fmt2//'A')'--------------------------'
       Write(LF,*)
-      Write(LF,Fmt2//'A,T45,L6)')'Using DICE',DoDice
+      Write(LF,Fmt2//'A,T45,L6)')'Heat-bath configuration interaction'
+     &                                                        ,DoDice
+      Write(LF,Fmt2//'A,T45,L6)')'Semistochastic algorithm',Dice_stoc
+      Call CollapseOutput(0,'DICE specifications:')
+
+*     Skip printing CI specifications in DICE
+      GoTo 114
+
+ 113  Continue
 #endif
 
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
@@ -334,7 +342,7 @@ C Local print level (if any)
       If (KSDFT.ne.'SCF'.and.KSDFT.ne.'PAM') Call Print_NQ_Info(iSpin)
       Call CollapseOutput(0,'CI expansion specifications:')
 
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
  114  Continue
 #endif
 

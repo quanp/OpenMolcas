@@ -520,7 +520,8 @@ C LSQ and LWO: scratch areas
 * compute orbital overlap matrix
 c           IF (NACTEL.GT.0) THEN
 * NN.14 Skip this when DMRG-CASSCF due to CI-vector dependency
-         IF(.NOT.(DoDMRG.or.doBlockDMRG.or.iDoNECI).AND.NACTEL.GT.0)THEN
+         IF(.NOT.(DoDMRG.or.doBlockDMRG.or.iDoNECI.or.doDice)
+     &                                        .AND.NACTEL.GT.0)THEN
            CALL GETMEM('SMAT','ALLO','REAL',LSMAT,NAC*NAC)
            IWAY = 1
            CALL OVLP(IWAY,CMO,WORK(LCMON),WORK(LSMAT))

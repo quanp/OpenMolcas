@@ -240,7 +240,15 @@ C.. for GAS
       Call CollapseOutput(1,Line)
       Write(LF,Fmt1)'--------------------------'
       Write(LF,*)
-      Write(LF,Fmt2//'A,T45,L6)')'Using DICE',DoDice
+      Write(LF,Fmt2//'A,T45,L6)')'Heat-bath configuration interaction'
+     &                                                        ,DoDice
+      Write(LF,Fmt2//'A,T45,L6)')'Semistochastic algorithm',Dice_stoc
+      Call CollapseOutput(0,'DICE specifications:')
+
+*     Skip printing CI specifications in DICE
+      GoTo 114
+
+ 113  Continue
 #endif
 
 
@@ -403,7 +411,7 @@ C.. for GAS
       end if
       Call CollapseOutput(0,'CI expansion specifications:')
 
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
  114  Continue
 #endif
 
@@ -446,7 +454,7 @@ C.. for GAS
 * NN.14 FIXME: in DMRG-CASSCF, skip this check for the time
 *              since Block DMRG code will check this internally
 *     If (NROOTS .GT. NCSASM(LSYM)) Then
-      If (.not.iDoNeci .and. .not.doDMRG
+      If (.not.iDoNeci .and. .not.doDMRG .and. .not.doDice
      &    .and. .not.doBlockDMRG .and. NROOTS .GT. NCSASM(LSYM)) Then
          Write(LF,*) '************ ERROR ***********'
          Write(LF,*) ' You can''t ask for more roots'
