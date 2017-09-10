@@ -108,21 +108,21 @@
       write(LUTOTE,'(A6,I3)') 'nroots', lroots
       write(LUTOTE,*)
       write(LUTOTE,'(A8)') 'schedule'
-      write(LUTOTE,'(A6)') '0 1e-3'
-      write(LUTOTE,'(A6)') '3 5e-4'
-      write(LUTOTE,'(A6)') '6 2e-4'
+      write(LUTOTE,'(A1,E12.5)') '0', dice_eps1*1.0d2
+      write(LUTOTE,'(A1,E12.5)') '3', dice_eps1*1.0d1
+      write(LUTOTE,'(A1,E12.5)') '6', dice_eps1
       write(LUTOTE,'(A3)') 'end'
-      write(LUTOTE,'(A7,I3)') 'maxiter', 20
+      write(LUTOTE,'(A10)') 'maxiter 20'
       write(LUTOTE,'(A5)') 'DoRDM'
       write(LUTOTE,'(A8)') 'dE 1.e-8'
       write(LUTOTE,*)
-      write(LUTOTE,'(A11)') 'SampleN 200'
-      write(LUTOTE,'(A15)') 'epsilon2 1.0e-8'
+      write(LUTOTE,'(A7,I6)') 'SampleN', dice_sampleN
+      write(LUTOTE,'(A8,E12.5)') 'epsilon2', dice_eps2
       write(LUTOTE,'(A18)') 'targetError 8.0e-5'
       if (dice_stoc.EQV..False.) then
         write(LUTOTE,'(A13)') 'deterministic'
       else
-        write(LUTOTE,'(A20)') 'epsilon2Large 1.0e-6'
+        write(LUTOTE,'(A13,E12.5)') 'epsilon2Large', dice_eps2*10.0d0
       endif
 
       close(LUTOTE)
@@ -195,14 +195,16 @@
       close(LUTOTE)
       call c_remove("dice.energy")
 
-      call molcas_open(LUTOTE,'PT2.energy')
+      if (dice_stoc.EQV..True.) then
+        call molcas_open(LUTOTE,'PT2.energy')
 
-      do chemroot=1,lroots
-        read(LUTOTE,*) PT2ENER
-        write(6,*) 'DICE> PT2 Energy: ', PT2ENER
-      enddo
-      close(LUTOTE)
-      call c_remove("PT2.energy")
+        do chemroot=1,lroots
+          read(LUTOTE,*) PT2ENER
+          write(6,*) 'DICE> PT2 Energy: ', PT2ENER
+        enddo
+        close(LUTOTE)
+        call c_remove("PT2.energy")
+      endif
 
       Call qExit(ROUTINE)
 

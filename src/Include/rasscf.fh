@@ -38,6 +38,9 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,davidson_tol,chemps2_blb,chemps2_noise
 #endif
+#ifdef _DICE_
+     &                ,dice_eps1,dice_eps2
+#endif
       COMMON/RELAUX/  ENER,CONV,FDIAG,THRE,THRTE,THRSX,ROTMAX,
      &                ECAS,CMAX,WEIGHT,DE,CBLBM,
      &                THREN,THFACT,TMIN,PRETHR,PROTHR,
@@ -45,6 +48,9 @@
      &                ExFac,VIA_DFT,HALFQ,VIA,HALFQ1,E2act
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,davidson_tol,chemps2_blb,chemps2_noise
+#endif
+#ifdef _DICE_
+     &                ,dice_eps1,dice_eps2
 #endif
 *
       INTEGER         LROOTS,ICICH,IDIAG,ICIRST,KAVER,KSYM(4),MAXJT,
@@ -61,7 +67,7 @@
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
 #ifdef _DICE_
-     &                ,nref_dice
+     &                ,nref_dice,dice_sampleN
 #endif
       COMMON/INTINP/  LROOTS,ICICH,IDIAG,ICIRST,KAVER,KSYM,MAXJT,
      &                IXSYM,IPRSEC,MAXORBOUT,
@@ -77,7 +83,7 @@
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
 #ifdef _DICE_
-     &                ,nref_dice
+     &                ,nref_dice,dice_sampleN
 #endif
 *
       Logical         RFpert,lSquare, Start_Vectors, NonEq, DoFaro

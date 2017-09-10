@@ -136,9 +136,14 @@ C   No changing about read in orbital information from INPORB yet.
 #endif
 
 ! Quan.17: Dice default flags
+#ifdef _DICE_
       doDice = .false.
       Dice_stoc = .false.
       nref_dice = 1
+      dice_eps1 = 1.0d-5
+      dice_eps2 = 1.0d-7
+      dice_sampleN = 200
+#endif
 
 * Orbital-free embedding
       Do_OFemb=.false.
@@ -2726,6 +2731,25 @@ c       write(6,*)          '  --------------------------------------'
 *       do iref_dice=1,nref_dice
 *          write(6,*) 'DICE: DB> HFOCC', hfocc(iref_dice)
 *       enddo
+       Call ChkIfKey()
+      End If
+*---  Process EPSI command --------------------------------------------*
+      If (KeyEPSI) Then
+       If (DBG) Write(6,*) ' EPS (Thresholds) command was used.'
+       Call SetPos(LUInput,'EPS',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading thresholds after EPSI keyword.'
+       Read(LUInput,*,End=9910,Err=9920) dice_eps1,dice_eps2
+       ReadStatus=' O.K. after reading thresholds after EPSI keyword.'
+       Call ChkIfKey()
+      End If
+*---  Process SAMP command --------------------------------------------*
+      If (KeySAMP) Then
+       Call SetPos(LUInput,'SAMP',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after SAMP keyword.'
+       Read(LUInput,*,End=9910,Err=9920) dice_sampleN
+       ReadStatus=' O.K. after reading data after SAMP keyword.'
        Call ChkIfKey()
       End If
 #endif
