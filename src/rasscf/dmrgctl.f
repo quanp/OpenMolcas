@@ -11,7 +11,6 @@
 * Copyright (C) Naoki Nakatani                                         *
 ************************************************************************
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
-=======
 *  DMRGCtl
 *
 *> @brief
