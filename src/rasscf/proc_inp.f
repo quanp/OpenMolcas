@@ -143,6 +143,8 @@ C   No changing about read in orbital information from INPORB yet.
       dice_eps1 = 1.0d-5
       dice_eps2 = 1.0d-7
       dice_sampleN = 200
+      dice_iter = 20
+      dice_restart = .false.
 #endif
 
 * Orbital-free embedding
@@ -2750,6 +2752,21 @@ c       write(6,*)          '  --------------------------------------'
        ReadStatus=' Failure reading data after SAMP keyword.'
        Read(LUInput,*,End=9910,Err=9920) dice_sampleN
        ReadStatus=' O.K. after reading data after SAMP keyword.'
+       Call ChkIfKey()
+      End If
+*---  Process DITE command --------------------------------------------*
+      If (KeyDITE) Then
+       Call SetPos(LUInput,'DITE',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after DITE keyword.'
+       Read(LUInput,*,End=9910,Err=9920) dice_iter
+       ReadStatus=' O.K. after reading data after DITE keyword.'
+       Call ChkIfKey()
+      End If
+*---  Process DIRE command --------------------------------------------*
+      If (KeyDIRE) Then
+       dice_restart=.True.
+       Call SetPos(LUInput,'DIRE',Line,iRc)
        Call ChkIfKey()
       End If
 #endif

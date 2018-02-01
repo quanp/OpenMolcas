@@ -67,7 +67,7 @@
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
 #ifdef _DICE_
-     &                ,nref_dice,dice_sampleN
+     &                ,nref_dice,dice_sampleN,dice_iter
 #endif
       COMMON/INTINP/  LROOTS,ICICH,IDIAG,ICIRST,KAVER,KSYM,MAXJT,
      &                IXSYM,IPRSEC,MAXORBOUT,
@@ -83,7 +83,7 @@
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
 #ifdef _DICE_
-     &                ,nref_dice,dice_sampleN
+     &                ,nref_dice,dice_sampleN,dice_iter
 #endif
 *
       Logical         RFpert,lSquare, Start_Vectors, NonEq, DoFaro
@@ -95,7 +95,7 @@
      &                , chemps2_restart, chemps2_can
 #endif
 #ifdef _DICE_
-     &                , dice_stoc
+     &                , dice_stoc, dice_restart
 #endif
       COMMON/LOGINP/  RFpert,lSquare, Start_Vectors, NonEq, DoFaro
      &                ,DOFCIDUMP,DoBlockDMRG, DoDice
@@ -106,7 +106,7 @@
      &                , chemps2_restart, chemps2_can
 #endif
 #ifdef _DICE_
-     &                , dice_stoc
+     &                , dice_stoc, dice_restart
 #endif
 *
       REAL*8          PRWTHR,POTNUC,CCI,

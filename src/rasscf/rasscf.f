@@ -1436,7 +1436,11 @@ cGLM some additional printout for MC-PDFT
               end if
             end if
           else
-            IF (DIFFE.GT.1.D-10 .AND. NROOTS.EQ.1) THEN
+            DIFFETol = 1.D-10
+#ifdef _DICE_
+            if (doDice) DIFFETol = 5.D-9
+#endif
+            IF (DIFFE.GT.DIFFETol .AND. NROOTS.EQ.1) THEN
               Write(LF,'(6X,120A1)') ('=',i=1,120)
               Call WarningMessage(2,'Rasscf and CI energies differ.')
               Write(LF,'(6X,A,I11)')    'iteration           ',ITER

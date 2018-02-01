@@ -23,9 +23,9 @@
       Integer LINSIZE, NUM_TEI, dtemp, nooctemp, labelpsi4
       Integer conversion(8)
       Integer activesize(8)
-      Real*8  chemps2_totale_4d, revdiff, chemps2_conv, pt2ener
+      Real*8  revdiff, pt2ener
       Logical fiedler, mps0
-      Integer chemroot, chemps2_info
+      Integer chemroot
       character(len=10) :: rootindex
       character(len=3) :: dice_nprocs
       character(len=150) :: imp1, imp2
@@ -97,6 +97,12 @@
 #ifdef _MOLCAS_MPP_
       if ( KING() ) then
 #endif
+
+! Cleanup output.dat.total
+      if (IRST.EQ.0) then
+        call c_remove("output.dat.total")
+      endif
+      write(6,*) 'DICE> INTERATION : ', ITER
       LUTOTE = isFreeUnit(30)
       call molcas_open(LUTOTE,'input.dat')
 
@@ -112,13 +118,17 @@
       write(LUTOTE,'(A1,E12.5)') '3', dice_eps1*1.0d1
       write(LUTOTE,'(A1,E12.5)') '6', dice_eps1
       write(LUTOTE,'(A3)') 'end'
-      write(LUTOTE,'(A10)') 'maxiter 20'
+      write(LUTOTE,'(A7,I6)') 'maxiter', dice_iter
       write(LUTOTE,'(A5)') 'DoRDM'
       write(LUTOTE,'(A8)') 'dE 1.e-8'
       write(LUTOTE,*)
       write(LUTOTE,'(A7,I6)') 'SampleN', dice_sampleN
       write(LUTOTE,'(A8,E12.5)') 'epsilon2', dice_eps2
       write(LUTOTE,'(A18)') 'targetError 8.0e-5'
+      if (IRST>0 .or. dice_restart.eqv..true.) then
+        write(LUTOTE,'(A11)') 'fullrestart'
+      endif
+
       if (dice_stoc.EQV..False.) then
         write(LUTOTE,'(A13)') 'deterministic'
       else
@@ -148,6 +158,7 @@
      &                " Dice >output.dat 2>dice.err"
         endif
         call systemf(imp2,iErr)
+        call systemf("cat output.dat >> output.dat.total",iErr)
         if (iErr.NE.0) then
           write(6,*) 'DICE> DICE crashed'
         endif
