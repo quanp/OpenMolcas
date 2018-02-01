@@ -62,7 +62,7 @@
      &                ITMAX,IPT2,ISPDEN,LOWMS,
      &                ISUPSM,IORDEM,IFORDE,IPCMROOT,ICIRFROOT,
      &                iRlxRoot,n_Det,iAlphaBeta,
-     &                MxDMRG,INOCALC,ISAVE_EXP,IEXPAND
+     &                MxDMRG,INOCALC,ISAVE_EXP,IEXPAND,hRoots
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
@@ -78,7 +78,7 @@
      &                ITMAX,IPT2,ISPDEN,LOWMS,
      &                ISUPSM,IORDEM,IFORDE,IPCMROOT,ICIRFROOT,
      &                iRlxRoot,n_Det,iAlphaBeta,
-     &                MxDMRG,INOCALC,ISAVE_EXP,IEXPAND
+     &                MxDMRG,INOCALC,ISAVE_EXP,IEXPAND,hRoots
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
@@ -87,7 +87,7 @@
 #endif
 *
       Logical         RFpert,lSquare, Start_Vectors, NonEq, DoFaro
-     &                ,DOFCIDUMP,DoBlockDMRG,DoDice
+     &                ,DOFCIDUMP,DoBlockDMRG,DoDice,DoGradPDFT
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif
@@ -98,7 +98,7 @@
      &                , dice_stoc, dice_restart
 #endif
       COMMON/LOGINP/  RFpert,lSquare, Start_Vectors, NonEq, DoFaro
-     &                ,DOFCIDUMP,DoBlockDMRG, DoDice
+     &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT,DoDice
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif

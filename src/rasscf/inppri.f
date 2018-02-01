@@ -44,6 +44,7 @@
 #include "WrkSpc.fh"
 #include "splitcas.fh"
 #include "fciqmc.fh"
+#include "lucia_ini.fh"
       Character*8   Fmt1,Fmt2,Label
       Character*120  Line,BlLine,StLine
       Character*3 lIrrep(8)
@@ -85,7 +86,9 @@
       l_casdft = KSDFT(1:5).eq.'TLSDA'   .or.
      &           KSDFT(1:6).eq.'TLSDA5'  .or.
      &           KSDFT(1:5).eq.'TBLYP'   .or.
-     &           KSDFT(1:4).eq.'TSSB'    .or.
+     &           KSDFT(1:6).eq.'TSSBSW'  .or.
+     &           KSDFT(1:5).eq.'TSSBD'   .or.
+     &           KSDFT(1:5).eq.'TS12G'   .or.
      &           KSDFT(1:4).eq.'TPBE'    .or.
      &           KSDFT(1:5).eq.'FTPBE'   .or.
      &           KSDFT(1:7).eq.'TREVPBE' .or.
@@ -336,6 +339,10 @@ C.. for GAS
       else
         Write(LF,Fmt2//'A,T40,I11)')'Number of CSFs',
      &                           NCSASM(LSYM)
+        if (N_ELIMINATED_GAS_MOLCAS.gt.0) Then
+          Write(LF,Fmt2//'A,T40,I11)')'Number of highly excited CSFs',
+     &                           nCSF_HEXS
+        EndIf
         Write(LF,Fmt2//'A,T40,I11)')'Number of determinants',
      &                           NDTASM(LSYM)
       end if

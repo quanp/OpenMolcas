@@ -7,6 +7,8 @@
 * is provided "as is" and without any express or implied warranties.   *
 * For more details see the full text of the license in the file        *
 * LICENSE or in <http://www.gnu.org/licenses/>.                        *
+*                                                                      *
+* Copyright (C) 2018, Ignacio Fdez. Galvan                             *
 ************************************************************************
       Subroutine Proc_Inp(DSCF,Info,lOPTO,iRc)
 
@@ -759,7 +761,9 @@ C   No changing about read in orbital information from INPORB yet.
        l_casdft = KSDFT(1:5).eq.'TLSDA'   .or.
      &            KSDFT(1:6).eq.'TLSDA5'  .or.
      &            KSDFT(1:5).eq.'TBLYP'   .or.
-     &            KSDFT(1:4).eq.'TSSB'    .or.
+     &            KSDFT(1:6).eq.'TSSBSW'  .or.
+     &            KSDFT(1:5).eq.'TSSBD'   .or.
+     &            KSDFT(1:5).eq.'TS12G'   .or.
      &            KSDFT(1:4).eq.'TPBE'    .or.
      &            KSDFT(1:5).eq.'FTPBE'   .or.
      &            KSDFT(1:7).eq.'TREVPBE' .or.
@@ -1053,6 +1057,24 @@ CIgorS End
        Call ChkIfKey()
       End If
 *
+*
+*---  Process ALPH command --------------------------------------------*
+      If (KeyALPH) Then
+       If (DBG) Write(6,*)' The ALPH keyword was used.'
+       Call SetPos(LUInput,'ALPH',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after ALPH keyword.'
+       Read(LUInput,*,End=9910,Err=9920) iAlphaBeta
+       ReadStatus=' O.K. after reading data after ALPH keyword.'
+       If (iAlphaBeta.lt.0) iAlphaBeta=-1
+       If (iAlphaBeta.gt.0) iAlphaBeta=1
+       If (DBG) Then
+        If (iAlphaBeta.eq.1) Write(6,*)' Read alpha orbitals from UHF'
+        If (iAlphaBeta.eq.-1) Write(6,*)' Read beta orbitals from UHF'
+       End If
+       Call ChkIfKey()
+      End If
+*
 * =========   Input source for orbitals: =============================*
 * INVEC=0 is used to indicate if any source of orbitals has been
 * identified.
@@ -1141,14 +1163,30 @@ CIgorS End
           call Quit(_RC_INPUT_ERROR_)
         end if
 *     orbitals available?
-        if (mh5_exists_dset(mh5id, 'MO_VECTORS')) then
+        select case (iAlphaBeta)
+          case (1)
+            Line='MO_ALPHA_VECTORS'
+          case (-1)
+            Line='MO_BETA_VECTORS'
+          case default
+            Line='MO_VECTORS'
+        end select
+        if (mh5_exists_dset(mh5id, trim(Line))) then
           inVec=4
         end if
 *     typeindex data available?
-        if (mh5_exists_dset(mh5id, 'TYPEINDEX')) then
+        select case (iAlphaBeta)
+          case (1)
+            Line='MO_ALPHA_TYPEINDICES'
+          case (-1)
+            Line='MO_BETA_TYPEINDICES'
+          case default
+            Line='MO_TYPEINDICES'
+        end select
+        if (mh5_exists_dset(mh5id, trim(Line))) then
           iOrbData=3
           call mma_allocate(typestring, sum(nbas(1:nsym)))
-          call mh5_fetch_dset(mh5id, 'TYPEINDEX', typestring)
+          call mh5_fetch_dset(mh5id, trim(Line), typestring)
           call tpstr2orb(nsym_l,nbas_l,typestring,
      $            nfro_l,nish_l, nrs1_l,nrs2_l,nrs3_l, nssh_l,ndel_l)
           call mma_deallocate(typestring)
@@ -1228,7 +1266,7 @@ CIgorS End
          Write(6,*)' But some information does not match.'
          IF(IERR.eq.1) Then
           Write(6,*)' In the file, nr of symmetries is =',NSYM_L
-          Write(6,*)' but accurding to runfile, it is=',NSYM
+          Write(6,*)' but according to the runfile, it is=',NSYM
          ELSE IF(IERR.eq.2) Then
           Write(6,*)' In the file, nr of basis functions/symm is'
           Write(6,'(1x,8I5)')(NBAS_L(I),I=1,NSYM)
@@ -1936,7 +1974,7 @@ C orbitals accordingly
        Call ChkIfKey()
       End If
 *
-* --- Process EXCI command
+* --- Process HEXS command
 *
       IF (KEYHEXS) THEN
         IF(DBG) WRITE(6,*) ' HEXS (Highly excited states)'//
@@ -1954,8 +1992,40 @@ C orbitals accordingly
          ReadStatus=' O.K. after reading data following HEXS keyword.'
       END IF
 *
+* --- Process DEXS command
+* At the moment same array as HEXS is being used
+* If HEXS and DEXS should be used together rename one these arrays
+*
+      IF (KEYDEXS) THEN
+        IF(DBG) WRITE(6,*) ' DEXS (Doubly excited states)'//
+     &                       ' keyword was given. '
+       Call SetPos(LUInput,'DEXS',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       Call GetMem('Temp1','Allo','Inte',ipTemp1,mxgas)
+       I_ELIMINATE_GAS_MOLCAS = 2
+       ReadStatus=' Failure reading data following HEXS keyword.'
+       Read(LUInput,*,End=9910,Err=9920) N_ELIMINATED_GAS_MOLCAS
+       ReadStatus=' O.K. after reading data following HEXS keyword.'
+         ReadStatus=' Failure reading data following HEXS keyword.'
+         Read(LUInput,*,End=9910,Err=9920)
+     &   (IELIMINATED_IN_GAS_MOLCAS(I),I=1,N_ELIMINATED_GAS_MOLCAS)
+         ReadStatus=' O.K. after reading data following HEXS keyword.'
+      END IF
+*
+*---  Process HROO command ---
+*
+      IF (KEYHROO) THEN
+        IF(DBG) WRITE(6,*) ' HROO (Hidden roots)'//
+     &                       ' keyword was given. '
+       Call SetPos(LUInput,'HROO',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data following HROO keyword.'
+       Read(LUInput,*,End=9910,Err=9920) hRoots
+       ReadStatus=' O.K. after reading data following HROO keyword.'
+      END IF
 *
 *---  Process CLEA command ---
+*
       Continue
       If (KeyCLEA) Then
        If (DBG) Write(6,*) ' CLEAN (Orbital Cleaning) keyword.'
@@ -2436,24 +2506,6 @@ c       write(6,*)          '  --------------------------------------'
        If (DBG) Write(6,*)' Print determinant expansions of CSFs'
        Call ChkIfKey()
       End If
-*
-*
-*---  Process ALPH command --------------------------------------------*
-      If (KeyALPH) Then
-       If (DBG) Write(6,*)' The ALPH keyword was used.'
-       Call SetPos(LUInput,'ALPH',Line,iRc)
-       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
-       ReadStatus=' Failure reading data after ALPH keyword.'
-       Read(LUInput,*,End=9910,Err=9920) iAlphaBeta
-       ReadStatus=' O.K. after reading data after ALPH keyword.'
-       If (iAlphaBeta.lt.0) iAlphaBeta=-1
-       If (iAlphaBeta.gt.0) iAlphaBeta=1
-       If (DBG) Then
-        If (iAlphaBeta.eq.1) Write(6,*)' Read alpha orbitals from UHF'
-        If (iAlphaBeta.eq.-1) Write(6,*)' Read beta orbitals from UHF'
-       End If
-       Call ChkIfKey()
-      End If
 
 *---  Process FCIDUMP command -----------------------------------------*
       If (KeyFCID) Then
@@ -2613,9 +2665,13 @@ c       write(6,*)          '  --------------------------------------'
 #ifdef _ENABLE_CHEMPS2_DMRG_
        iOrbTyp = 2
        IPT2 = 1
-*       Write(6,*) 'CHEMPS2> 3-RDM and F4-RDM require',
-*     &            ' PseudoCanonical orbitals as default'
-*       Write(6,*) 'CHEMPS2> Automatically set: OUTOrbitals = CANOnical'
+       Write(6,*)
+     & 'CHEMPS2> 3-RDM and F4-RDM require PseudoCanonical orbitals'
+       Write(6,*) 'CHEMPS2> Automatically set: OUTOrbitals = CANOnical'
+       if (KeySUPS) then
+         write(6,*) 'CHEMPS2> Bug using SYPSym and 3RDM, disable SUPSYm'
+         Call Abend()
+       endif
 #endif
        Call SetPos(LUInput,'3RDM',Line,iRc)
        Call ChkIfKey()

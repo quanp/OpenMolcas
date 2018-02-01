@@ -32,6 +32,7 @@
       Integer I, J, ISTATE, JSTATE, IJOB, ILINE, LINENR
       Integer LuIn
       Integer NFLS
+      REAL*8 ANORM
 
       CALL QENTER(ROUTINE)
 
@@ -229,23 +230,23 @@ C ------------------------------------------
         ELSE
           BACKSPACE(LuIn)
           Read(LuIn,*,ERR=997) NJOB,(NSTAT(I),I=1,NJOB)
+          DO IJOB=1,NJOB
+            NSTATE=NSTATE+NSTAT(IJOB)
+          END DO
+          Call GetMem('JBNUM','Allo','Inte',LJBNUM,NSTATE)
+          Call GetMem('LROOT','Allo','Inte',LLROOT,NSTATE)
           LINENR=LINENR+1
+          NSTATE=0
           DO IJOB=1,NJOB
             ISTAT(IJOB)=NSTATE+1
-            Read(LuIn,*,ERR=997) (LROOT(NSTATE+J),J=1,NSTAT(IJOB))
+            Read(LuIn,*,ERR=997) (iWork(lLROOT+NSTATE+J),
+     &                                 J=0,NSTAT(IJOB)-1)
             LINENR=LINENR+1
             DO ISTATE=NSTATE+1,NSTATE+NSTAT(IJOB)
-              JBNUM(ISTATE)=IJOB
+              iWork(lJBNUM+ISTATE-1)=IJOB
             END DO
             NSTATE=NSTATE+NSTAT(IJOB)
           END DO
-        END IF
-        IF(NSTATE.GT.MXSTAT) THEN
-          Call WarningMessage(2,'Too many states.')
-          WRITE(6,*)' Max nr of (spin-free) states is MXSTAT=',MXSTAT
-          WRITE(6,*)' with value taken from parameter MXROOT in'
-          WRITE(6,*)' ''Molcas.fh''. Increase and recompile.'
-          CALL ABEND()
         END IF
         GOTO 100
       END IF
@@ -275,11 +276,14 @@ C ------------------------------------------
       IF(LINE(1:4).EQ.'HEXT') THEN
         IFHEXT=.TRUE.
         IFHAM =.TRUE.
-        Read(LuIn,*,ERR=997)((HAM(ISTATE,JSTATE),JSTATE=1,ISTATE),
-     &                                           ISTATE=1,NSTATE)
-        DO ISTATE=1,NSTATE-1
-         DO JSTATE=ISTATE+1,NSTATE
-          HAM(ISTATE,JSTATE)=HAM(JSTATE,ISTATE)
+        Call GetMem('HAM','Allo','Real',LHAM,NSTATE**2)
+        Read(LuIn,*,ERR=997)((WORK(LHAM+ISTATE*NSTATE+JSTATE),
+     &                                           JSTATE=0,ISTATE),
+     &                                           ISTATE=0,NSTATE-1)
+        DO ISTATE=0,NSTATE-2
+         DO JSTATE=ISTATE,NSTATE-1
+           WORK(LHAM+JSTATE*NSTATE+ISTATE)=
+     &     WORK(LHAM+ISTATE*NSTATE+JSTATE)
          END DO
         END DO
         LINENR=LINENR+NSTATE
@@ -301,19 +305,22 @@ C ------------------------------------------
       IF(LINE(1:4).EQ.'EJOB') THEN
         IFEJOB=.TRUE.
         IFHAM=.TRUE.
+        LINENR=LINENR+1
         GOTO 100
       END IF
 C ------------------------------------------
       IF(LINE(1:4).EQ.'HDIA') THEN
         IFHDIA=.TRUE.
-        Read(LuIn,*,ERR=997)(HDIAG(ISTATE),ISTATE=1,NSTATE)
+        Call GetMem('HDIAG','ALLO','REAL',LHDIAG,NSTATE)
+        Read(LuIn,*,ERR=997)(Work(LHDIAG+ISTATE),ISTATE=0,NSTATE-1)
         LINENR=LINENR+1
         GOTO 100
       END IF
 C ------------------------------------------
       IF(LINE(1:4).EQ.'SHIF') THEN
         IFSHFT=.TRUE.
-        Read(LuIn,*,ERR=997)(ESHFT(ISTATE),ISTATE=1,NSTATE)
+        Call GetMem('ESHFT','Allo','Real',LESHFT,NSTATE)
+        Read(LuIn,*,ERR=997)(Work(LESHFT+ISTATE),ISTATE=0,NSTATE-1)
         LINENR=LINENR+1
         GOTO 100
       END IF
@@ -597,6 +604,7 @@ C ------------------------------------------
       END IF
 C ------------------------------------------
       If(Line(1:4).eq.'TMOS') then
+! Calculate exact isotropically averaged semi-classical intensities
 ! Activate integration of transition moment oscillator strengths
 ! based on the exact non-relativistic Hamiltonian in the weak field
 ! approximation.
@@ -605,7 +613,66 @@ C ------------------------------------------
         Linenr=Linenr+1
         GoTo 100
       Endif
+C ------------------------------------------
+      IF(LINE(1:4).EQ.'KVEC')THEN
+! Calculate exact semi-classical intensities in given directions
+        DO_KVEC=.TRUE.
+        PRRAW=.TRUE.
+        Do_TMOS=.TRUE.
+        ToFile=.TRUE.
+        Read(LuIn,*,ERR=997) NKVEC
+        CALL GETMEM('KVEC  ','ALLO','REAL',PKVEC,3*NKVEC)
+        Linenr=Linenr+1
+        DO ILINE=1,NKVEC
+          Read(LuIn,*,ERR=997) (WORK(PKVEC+ILINE-1+(I-1)*NKVEC),I=1,3)
+          Linenr=Linenr+1
+        END DO
+! Ensure that the wavectors are normalized
+        DO ILINE=1,NKVEC
+          ANORM = WORK(PKVEC+ILINE-1)**2 +
+     &            WORK(PKVEC+ILINE-1+NKVEC)**2 +
+     &            WORK(PKVEC+ILINE-1+2*NKVEC)**2
+          WORK(PKVEC+ILINE-1) =
+     &    WORK(PKVEC+ILINE-1)/DSQRT(ANORM)
+          WORK(PKVEC+ILINE-1+NKVEC) =
+     &    WORK(PKVEC+ILINE-1+NKVEC)/DSQRT(ANORM)
+          WORK(PKVEC+ILINE-1+2*NKVEC) =
+     &    WORK(PKVEC+ILINE-1+2*NKVEC)/DSQRT(ANORM)
+        END DO
+        GOTO 100
+      END IF
 C--------------------------------------------
+      IF(LINE(1:4).EQ.'PRRA')THEN
+! Print the raw directions for exact semi-classical intensities
+        PRRAW=.TRUE.
+        LINENR=LINENR+1
+        GOTO 100
+      END IF
+C ------------------------------------------
+      IF(LINE(1:4).EQ.'PRWE')THEN
+! Print the weighted directions for exact semi-classical intensities
+        PRWEIGHT=.TRUE.
+        LINENR=LINENR+1
+        GOTO 100
+      END IF
+C ------------------------------------------
+      IF(LINE(1:4).EQ.'TOLE')THEN
+! Set tolerance for different gauges - currently 10 percent (0.1D0)
+! Defined as Tolerance = ABS(1-O_r/O_p)
+        NEW_TOLERANCE=.TRUE.
+        Read(LuIn,*,ERR=997) TOLERANCE
+        LINENR=LINENR+1
+        GOTO 100
+      END IF
+C ------------------------------------------
+      IF(LINE(1:4).EQ.'REDL')THEN
+! Reduce looping in intensities. Set limit for the inner and outer loop
+        REDUCELOOP=.TRUE.
+        Read(LuIn,*,ERR=997) LOOPDIVIDE
+        LINENR=LINENR+1
+        GOTO 100
+      END IF
+C ------------------------------------------
       If(Line(1:4).eq.'L-EF') then
 ! Set the order of the Lebedev polynomials used for the numerical
 ! integration over solid angles. Current default 5.
