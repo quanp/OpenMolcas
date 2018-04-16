@@ -150,7 +150,6 @@
 #endif
         call get_environment_variable("MOLCAS_DICE",
      &                                dice_nprocs, status=ierr)
-*        call getenvf("MOLCAS_DICE",dice_nprocs)
         if (ierr.NE.0) then
           imp2 = "Dice >output.dat 2>dice.err"
         else
@@ -158,18 +157,7 @@
      &                " Dice >output.dat 2>dice.err"
         endif
 
-**********************************************
-*Quan:dirty way to run in parallel both
-        call systemf('touch start',iErr)
-        call f_inquire('end', iErr)
-        do while (iErr==0)
-          call sleep(5)
-          call f_inquire('end', iErr)
-        enddo
-        call systemf('rm end', iErr)
-***********************************************
-
-*        call systemf(imp2,iErr)
+        call systemf(imp2,iErr)
         call systemf("cat output.dat >> output.dat.total",iErr)
         if (iErr.NE.0) then
           write(6,*) 'DICE> DICE crashed'
