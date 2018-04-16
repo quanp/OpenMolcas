@@ -108,13 +108,13 @@
 
       write(LUTOTE,'(A4,I3)') 'nocc', NACTEL
       do iref_dice=1,nref_dice
-          write(LUTOTE,'(A100)') hfocc(iref_dice)
+          write(LUTOTE,'(A200)') hfocc(iref_dice)
       enddo
       write(LUTOTE,'(A3)') 'end'
       write(LUTOTE,'(A6,I3)') 'nroots', lroots
       write(LUTOTE,*)
       write(LUTOTE,'(A8)') 'schedule'
-      write(LUTOTE,'(A1,E12.5)') '0', dice_eps1*1.0d2
+      write(LUTOTE,'(A1,E12.5)') '0', dice_eps1*1.0d1
       write(LUTOTE,'(A1,E12.5)') '3', dice_eps1*1.0d1
       write(LUTOTE,'(A1,E12.5)') '6', dice_eps1
       write(LUTOTE,'(A3)') 'end'
@@ -157,7 +157,19 @@
           imp2 = "mpirun -np "//trim(adjustl(dice_nprocs))//
      &                " Dice >output.dat 2>dice.err"
         endif
-        call systemf(imp2,iErr)
+
+**********************************************
+*Quan:dirty way to run in parallel both
+        call systemf('touch start',iErr)
+        call f_inquire('end', iErr)
+        do while (iErr==0)
+          call sleep(5)
+          call f_inquire('end', iErr)
+        enddo
+        call systemf('rm end', iErr)
+***********************************************
+
+*        call systemf(imp2,iErr)
         call systemf("cat output.dat >> output.dat.total",iErr)
         if (iErr.NE.0) then
           write(6,*) 'DICE> DICE crashed'
