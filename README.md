@@ -54,6 +54,7 @@ up and running is the following:
     ```
     pymolcas verify
     ```
+6.  Installing Molcas-CheMPS2 interface
 
 For running other calculations you should define the `MOLCAS` environment
 variable to point to the `build` directory. Run `pymolcas --help` to see the
