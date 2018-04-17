@@ -44,11 +44,11 @@ Ras2
 7 5 2 3
 CIROOT = 1 1 ; 1
 
-THRS 
+THRS
 1.0e-07 1.0e-03 1.0e-03
 
 DICE
-EPSilon 
+EPSilon
   5.0d-4 5.0d-5
 HFOC
   1
@@ -70,11 +70,11 @@ Ras2
 7 5 2 3
 CIROOT = 1 1 ; 1
 
-THRS 
+THRS
 1.0e-07 1.0e-03 1.0e-03
 
 DICE
-EPSilon 
+EPSilon
   5.0d-4 5.0d-5
 HFOC
   1
