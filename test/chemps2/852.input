@@ -63,7 +63,7 @@ Ras2
 CIROOT = 1 1 ; 1
 DMRG = 1000
 3RDM
-CHNOcanonical 
+CHNOcanonical
 HFOC = 2 0 2 0
 
 &CASPT2
@@ -87,7 +87,7 @@ Ras2
 CIROOT = 1 2 ; 2
 DMRG = 1000
 3RDM
-CHNOcanonical 
+CHNOcanonical
 HFOC = 2 0 2 0
 
 &CASPT2
