@@ -50,6 +50,9 @@
       Character*3 lIrrep(8)
       Character*80 Note
       Character*120 Line
+#ifdef _ENABLE_CHEMPS2_DMRG_
+      Character*3 SNAC
+#endif
       Logical FullMlk, get_BasisType
 cnf
       Logical Do_ESPF,lSave, lOPTO
@@ -222,6 +225,10 @@ C Local print level (if any)
      &                           Do3RDM
       Write(LF,Fmt2//'A,T45,I6)')'Restart scheme in 3-RDM and F.4-RDM',
      &                           chemps2_lrestart
+      write(SNAC, '(I3)') NAC
+      Write(LF,Fmt2//'A,T45,'//trim(adjustl(SNAC))//'I2)')
+     &                           'Occupation guess',
+     &                           (HFOCC(ihfocc), ihfocc=1,NAC)
       if ((chemps2_can.EQV..True.) .and. (Do3RDM.EQV..True.)) then
         Write(LF,Fmt2//'A,T45)')
      & 'Using pseudocanonical in 3-RDM and F.4-RDM'

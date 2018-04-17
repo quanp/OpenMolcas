@@ -108,7 +108,7 @@
 
       write(LUTOTE,'(A4,I3)') 'nocc', NACTEL
       do iref_dice=1,nref_dice
-          write(LUTOTE,'(A200)') hfocc(iref_dice)
+          write(LUTOTE,'(A200)') diceocc(iref_dice)
       enddo
       write(LUTOTE,'(A3)') 'end'
       write(LUTOTE,'(A6,I3)') 'nroots', lroots
