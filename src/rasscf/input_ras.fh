@@ -13,7 +13,7 @@
       Integer LuInput
 * Used for input processing
       Integer NKeys
-      Parameter (NKeys=115)
+      Parameter (NKeys=122)
 *------------------------------------------------------
 * Logical flags, to check whether a keyword has been used
 * in the input:
@@ -39,10 +39,11 @@
      &     keyRDMP, keyRSPC, keyDEFD, keyDISH, keyEXNE,
      &     keyBLOK, keySOCC, keyRGIN, keyPRSD, KeyFCID,
      &     KeyNOCA, KeySAVE, KeyEXPA, KeyH5OR, KeyH5CI,
-     &     KeyHEXS, KeyHEUR, KeyDMPO, KeyNEVP, keyHFOC,
+     &     KeyHEXS, KeyHEUR, keyDMPO, keyNEVP, keyHFOC,
      &     keyDAVT, keyCHRE, keyCHBL, keyMXSW, keyNOIS,
      &     keyDMRE, keyMXCA, keyDEXS, keyHROO, KeyTDM,
-     &     KeyZZZZ
+     &     keyCHNO, keyDICE, keySTOC, keyEPSI, keySAMP,
+     &     keyDITE, keyDIRE, KeyZZZZ
 
       Common /InputFlags/ KeyAAAA,
      &     KeyALTE, KeyATOM, KeyAVER, KeyCHAR, KeyCHOI,
@@ -65,10 +66,11 @@
      &     keyRDMP, keyRSPC, keyDEFD, keyDISH, keyEXNE,
      &     keyBLOK, keySOCC, keyRGIN, keyPRSD, KeyFCID,
      &     KeyNOCA, KeySAVE, KeyEXPA, KeyH5OR, KeyH5CI,
-     &     KeyHEXS, KeyHEUR, KeyDMPO, KeyNEVP, keyHFOC,
+     &     KeyHEXS, KeyHEUR, keyDMPO, keyNEVP, keyHFOC,
      &     keyDAVT, keyCHRE, keyCHBL, keyMXSW, keyNOIS,
-     &     keyDMRE, keyMXCA, KeyDEXS, keyHROO, KeyTDM,
-     &     KeyZZZZ
+     &     keyDMRE, keyMXCA, keyDEXS, keyHROO, KeyTDM,
+     &     keyCHNO, keyDICE, keySTOC, keyEPSI, keySAMP,
+     &     keyDITE, keyDIRE, KeyZZZZ
 
       Equivalence(KeyAAAA,KeyFlags(0))
 *------------------------------------------------------
@@ -96,7 +98,9 @@
      &           'NOCA','SAVE','EXPA','H5OR','H5CI',
      &           'HEXS','HEUR','DMPO','NEVP','HFOC',
      &           'DAVT','CHRE','CHBL','MXSW','NOIS',
-     &           'DMRE','MXCA','DEXS','HROO','TDM '/
+     &           'DMRE','MXCA','DEXS','HROO','TDM ',
+     &           'CHNO','DICE','STOC','EPSI','SAMP',
+     &           'DITE','DIRE'/
 *------------------------------------------------------
 * Input data sets:
       Integer iCI_I,IROOT_I,NFRO_I,NISH_I,NRS1_I,NRS2_I,NRS3_I,NDEL_I,

@@ -137,6 +137,12 @@
            If (DoCumulant) then
             write(6,Fmt1) 'This is a DMRG reference with exact 4-RDM,'//
      &                    ' activated by 3RDM keyword in RASSCF'
+            if (DoTranRDM) then
+              write(6,Fmt1) 'CheMPS2 transforms RDMs into'//
+     &                    ' pseudocanonical basis'
+            else
+              write(6,Fmt1) 'CheMPS2 assumes pseudocanonical basis'
+            endif
            End If
 #endif
         Else If ( ISCF.eq.1 ) then

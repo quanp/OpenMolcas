@@ -38,6 +38,9 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,davidson_tol,chemps2_blb,chemps2_noise
 #endif
+#ifdef _DICE_
+     &                ,dice_eps1,dice_eps2
+#endif
       COMMON/RELAUX/  ENER,CONV,FDIAG,THRE,THRTE,THRSX,ROTMAX,
      &                ECAS,CMAX,WEIGHT,DE,CBLBM,
      &                THREN,THFACT,TMIN,PRETHR,PROTHR,
@@ -45,6 +48,9 @@
      &                ExFac,VIA_DFT,HALFQ,VIA,HALFQ1,E2act
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,davidson_tol,chemps2_blb,chemps2_noise
+#endif
+#ifdef _DICE_
+     &                ,dice_eps1,dice_eps2
 #endif
 *
       INTEGER         LROOTS,ICICH,IDIAG,ICIRST,KAVER,KSYM(4),MAXJT,
@@ -60,6 +66,9 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
+#ifdef _DICE_
+     &                ,nref_dice,dice_sampleN,dice_iter
+#endif
       COMMON/INTINP/  LROOTS,ICICH,IDIAG,ICIRST,KAVER,KSYM,MAXJT,
      &                IXSYM,IPRSEC,MAXORBOUT,
      &                ICI,JCJ,
@@ -73,22 +82,31 @@
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
+#ifdef _DICE_
+     &                ,nref_dice,dice_sampleN,dice_iter
+#endif
 *
       Logical         RFpert,lSquare, Start_Vectors, NonEq, DoFaro
-     &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT
+     &                ,DOFCIDUMP,DoBlockDMRG,DoDice,DoGradPDFT
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif
 #ifdef _ENABLE_CHEMPS2_DMRG_
-     &                , chemps2_restart
+     &                , chemps2_restart, chemps2_can
+#endif
+#ifdef _DICE_
+     &                , dice_stoc, dice_restart
 #endif
       COMMON/LOGINP/  RFpert,lSquare, Start_Vectors, NonEq, DoFaro
-     &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT
+     &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT,DoDice
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif
 #ifdef _ENABLE_CHEMPS2_DMRG_
-     &                , chemps2_restart
+     &                , chemps2_restart, chemps2_can
+#endif
+#ifdef _DICE_
+     &                , dice_stoc, dice_restart
 #endif
 *
       REAL*8          PRWTHR,POTNUC,CCI,
@@ -97,8 +115,9 @@
       COMMON/RELINP/  PRWTHR,POTNUC,CCI(mxRoot,mxRef),
      &                TITLE,ECAS1,RLXGRD,EVAC
 *
+      Character(200)  HFOCC(20)
       Character(8)    IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY
-      COMMON/CHRINP/  IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY
+      COMMON/CHRINP/  IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY,HFOCC
 *
       INTEGER         iCIonly,NSM(mxOrb),KTIGHT
       COMMON/INTCI/   iCIonly,NSM,KTIGHT

@@ -165,6 +165,32 @@ C Local print level (if any)
       Call CollapseOutput(0,'Orbital specifications:')
       Write(LF,*)
 
+#ifdef _DICE_
+      if(.Not.DoDice) GoTo 113
+      Line=' '
+      Write(Line(left-2:),'(A)') 'DICE specifications:'
+      Call CollapseOutput(1,Line)
+      Write(LF,Fmt2//'A')'--------------------------'
+      Write(LF,*)
+      Write(LF,Fmt2//'A,T45,L6)')'Heat-bath configuration interaction'
+     &                                                        ,DoDice
+      Write(LF,Fmt2//'A,T45,L6)')'Semistochastic algorithm',Dice_stoc
+      Write(LF,Fmt2//'A,T45,L6)')'Full restart',dice_restart
+      Write(LF,Fmt2//'A,T45,I6)')'Max iterations',dice_iter
+      Write(LF,Fmt2//'A,T45,E10.3)')'Epsilon1',
+     &                           dice_eps1
+      Write(LF,Fmt2//'A,T45,E10.3)')'Epsilon2',
+     &                           dice_eps2
+      Write(LF,Fmt2//'A,T45,I6)')'SampleN',
+     &                           dice_sampleN
+      Call CollapseOutput(0,'DICE specifications:')
+
+*     Skip printing CI specifications in DICE
+      GoTo 114
+
+ 113  Continue
+#endif
+
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
       If(.Not.DoBlockDMRG) GoTo 113
 
@@ -196,6 +222,13 @@ C Local print level (if any)
      &                           Do3RDM
       Write(LF,Fmt2//'A,T45,I6)')'Restart scheme in 3-RDM and F.4-RDM',
      &                           chemps2_lrestart
+      if ((chemps2_can.EQV..True.) .and. (Do3RDM.EQV..True.)) then
+        Write(LF,Fmt2//'A,T45)')
+     & 'Using pseudocanonical in 3-RDM and F.4-RDM'
+      elseif ((chemps2_can.EQV..False.) .and. (Do3RDM.EQV..True.)) then
+        Write(LF,Fmt2//'A,T45)')
+     & 'Using non-pseudocanonical in 3-RDM and F.4-RDM'
+      endif
 #endif
 
 * NN.14 FIXME: haven't yet checked whether geometry opt. works correctly with DMRG
@@ -322,7 +355,7 @@ C Local print level (if any)
       If (KSDFT.ne.'SCF'.and.KSDFT.ne.'PAM') Call Print_NQ_Info(iSpin)
       Call CollapseOutput(0,'CI expansion specifications:')
 
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
  114  Continue
 #endif
 

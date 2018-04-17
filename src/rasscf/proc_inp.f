@@ -143,6 +143,7 @@ C   No changing about read in orbital information from INPORB yet.
 ! Quan.16: CheMPS2 default flags
       chemps2_restart=.false.
       chemps2_lrestart=0
+      chemps2_can=.true.
       davidson_tol = 1.0d-7
       chemps2_blb = 0.5d-2
       max_sweep = 8
@@ -150,6 +151,17 @@ C   No changing about read in orbital information from INPORB yet.
       max_canonical = max_sweep*5
 #endif
 
+! Quan.17: Dice default flags
+#ifdef _DICE_
+      doDice = .false.
+      Dice_stoc = .false.
+      nref_dice = 1
+      dice_eps1 = 1.0d-5
+      dice_eps2 = 1.0d-7
+      dice_sampleN = 200
+      dice_iter = 20
+      dice_restart = .false.
+#endif
 
 * Orbital-free embedding
       Do_OFemb=.false.
@@ -2699,7 +2711,7 @@ c       write(6,*)          '  --------------------------------------'
      & 'CHEMPS2> 3-RDM and F4-RDM require PseudoCanonical orbitals'
        Write(6,*) 'CHEMPS2> Automatically set: OUTOrbitals = CANOnical'
        if (KeySUPS) then
-         write(6,*) 'CHEMPS2> Bug using SYPSym and 3RDM, disable SUPSym'
+         write(6,*) 'CHEMPS2> Bug using SYPSym and 3RDM, disable SUPSYm'
          Call Abend()
        endif
 #endif
@@ -2716,6 +2728,18 @@ c       write(6,*)          '  --------------------------------------'
        ReadStatus=' Failure reading data after DAVT keyword.'
        Read(LUInput,*,End=9910,Err=9920) davidson_tol
        ReadStatus=' O.K. after reading data after DAVT keyword.'
+       Call ChkIfKey()
+      End If
+*---  Process CHNO command --------------------------------------------*
+      If (KeyCHNO) Then
+       If (DBG) Then
+         Write(6,*) ' Using non-canonical orbitals in CheMPS2',
+     &   ' (experimental)'
+       End If
+       iOrbTyp = 1
+       IPT2 = 0
+       chemps2_can = .false.
+       Call SetPos(LUInput,'CHNO',Line,iRc)
        Call ChkIfKey()
       End If
 *
@@ -2781,6 +2805,77 @@ c       write(6,*)          '  --------------------------------------'
 #endif
 
 #endif
+
+#ifdef _DICE_
+*---  Process DICE command --------------------------------------------*
+      If (KeyDICE) Then
+       DoDice=.True.
+       Write(6,*) 'DICE> (semistochastic) heat bath configuration ',
+     & 'interaction (SHCI)'
+       Call SetPos(LUInput,'DICE',Line,iRc)
+       Call ChkIfKey()
+      End If
+*---  Process STOC command --------------------------------------------*
+      If (KeySTOC) Then
+       Dice_Stoc=.True.
+       Write(6,*) 'DICE> Using semistochastic algorithm',
+     & 'interaction (SHCI)'
+       Call SetPos(LUInput,'STOC',Line,iRc)
+       Call ChkIfKey()
+      End If
+*---  Process HFOC command --------------------------------------------*
+      HFOCC = ''
+      If (KeyHFOC) Then
+       Call SetPos(LUInput,'HFOC',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after HFOC keyword.'
+       Read(LUInput,*,End=9910,Err=9920) nref_dice
+       do iref_dice=1,nref_dice
+          Read(LUInput,*,End=9910,Err=9920) hfocc(iref_dice)
+       enddo
+       ReadStatus=' O.K. after reading data after HFOC keyword.'
+*       write(6,*) 'DICE: DB> NREF_DICE', nref_dice
+*       do iref_dice=1,nref_dice
+*          write(6,*) 'DICE: DB> HFOCC', hfocc(iref_dice)
+*       enddo
+       Call ChkIfKey()
+      End If
+*---  Process EPSI command --------------------------------------------*
+      If (KeyEPSI) Then
+       If (DBG) Write(6,*) ' EPS (Thresholds) command was used.'
+       Call SetPos(LUInput,'EPS',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading thresholds after EPSI keyword.'
+       Read(LUInput,*,End=9910,Err=9920) dice_eps1,dice_eps2
+       ReadStatus=' O.K. after reading thresholds after EPSI keyword.'
+       Call ChkIfKey()
+      End If
+*---  Process SAMP command --------------------------------------------*
+      If (KeySAMP) Then
+       Call SetPos(LUInput,'SAMP',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after SAMP keyword.'
+       Read(LUInput,*,End=9910,Err=9920) dice_sampleN
+       ReadStatus=' O.K. after reading data after SAMP keyword.'
+       Call ChkIfKey()
+      End If
+*---  Process DITE command --------------------------------------------*
+      If (KeyDITE) Then
+       Call SetPos(LUInput,'DITE',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after DITE keyword.'
+       Read(LUInput,*,End=9910,Err=9920) dice_iter
+       ReadStatus=' O.K. after reading data after DITE keyword.'
+       Call ChkIfKey()
+      End If
+*---  Process DIRE command --------------------------------------------*
+      If (KeyDIRE) Then
+       dice_restart=.True.
+       Call SetPos(LUInput,'DIRE',Line,iRc)
+       Call ChkIfKey()
+      End If
+#endif
+
 *---  All keywords have been processed ------------------------------*
 
 ************************************************************************
@@ -2986,7 +3081,7 @@ C Test read failed. JOBOLD cannot be used.
 *
 *     In DMRG-CASSCF, skip GUGA and LUCIA settings
       NCONF=1
-      If(DoBlockDMRG) GoTo 9000
+      If(DoBlockDMRG .OR. DoDice) GoTo 9000
 * ===============================================================
 *
 *     Construct the Guga tables
