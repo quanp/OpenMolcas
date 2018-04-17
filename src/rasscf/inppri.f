@@ -242,6 +242,12 @@ C.. for GAS
 #ifdef _DICE_
       if(.Not.DoDice) GoTo 113
       Line=' '
+      Write(LF,Fmt2//'A,T45)') 'Please cite the following papers'
+      Write(LF,Fmt2//'A,T80)') '(https://sanshar.github.io/
+     &Dice/overview.html#license-and-how-to-cite)'
+      Write(LF,Fmt2//'A,T45)') 'JCTC, 2017, 13, 1595'
+      Write(LF,Fmt2//'A,T45)') 'JCTC, 2016, 12, 3674'
+
       Write(Line(left-2:),'(A)') 'DICE specifications:'
       Call CollapseOutput(1,Line)
       Write(LF,Fmt1)'--------------------------'
