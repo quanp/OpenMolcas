@@ -206,6 +206,11 @@ C Local print level (if any)
      &                           MxDMRG
       Write(LF,Fmt2//'A,T45,I6)')'Number of root(s) required',
      &                           NROOTS
+#ifdef _ENABLE_BLOCK_DMRG_
+      Write(LF,Fmt2//'A,T45,T100)')'Occupation guess',
+     &                           BLOCKOCC
+#endif
+
 #ifdef _ENABLE_CHEMPS2_DMRG_
       Write(LF,Fmt2//'A,T45,I6)')'Maximum number of sweeps',
      &                           max_sweep

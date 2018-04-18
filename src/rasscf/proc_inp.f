@@ -2698,6 +2698,15 @@ c       write(6,*)          '  --------------------------------------'
        DoBlockDMRG=.True.
        Call ChkIfKey()
       End If
+*---  Process HFOC command --------------------------------------------*
+      Blockocc = ' integral'
+      If (KeyHFOC) Then
+       Call SetPos(LUInput,'HFOC',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after HFOC keyword.'
+       Blockocc=Get_Ln(LUInput)
+       Call ChkIfKey()
+      End If
 *
 *---  Process 3RDM command --------------------------------------------*
       If (Key3RDM) Then

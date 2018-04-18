@@ -128,14 +128,14 @@
       Call block_calldmrg(JRST,lRoots,NAC,NACTEL,ISPIN-1,
      &                    Label,lSymMolpro,iWork(lOrbSym),
      &                    0.0d0,LW1,TUVX,MxDMRG,NRDM_ORDER,
-     &                    ThDMRG,ThNoise,ENER(1,ITER))
+     &                    ThDMRG,ThNoise,ENER(1,ITER),blockocc)
 
       If (IFINAL.EQ.2 .AND. Do3RDM .AND. NACTEL.GT.2) Then
 * Compute 3RDM for DMRG-cu4-CASPT2
         Call block_calldmrg(1,lRoots,NAC,NACTEL,ISPIN-1,
      &                      Label,lSymMolpro,iWork(lOrbSym),
      &                      0.0d0,LW1,TUVX,MxDMRG,3,
-     &                      THRE,0.0d0,ENER(1,ITER))
+     &                      THRE,0.0d0,ENER(1,ITER),blockocc)
       End If
 
       Call Getmem('OrbSym','Free','Inte',lOrbSym,NAC)
