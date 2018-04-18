@@ -206,7 +206,8 @@ c YM:   Just use the same way as Block did, the NOs will be added later
 #else
 C NN.14 Skip making new orbitals for DMRG-CASSCF except for the case OutOrb = Canonical
 C       because the DMRG is orbital variant.
-        If(.NOT.DoBlockDMRG.OR.iOrbTyp.EQ.2) Then
+        If((.NOT.DoBlockDMRG .AND. .NOT.DoCheMPS2) .OR.
+     &      iOrbTyp.EQ.2) Then
 #endif
 
 C

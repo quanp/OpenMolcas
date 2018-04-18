@@ -89,7 +89,8 @@
 #endif
 *
       Logical         RFpert,lSquare, Start_Vectors, NonEq, DoFaro
-     &                ,DOFCIDUMP,DoBlockDMRG,DoDice,DoGradPDFT
+     &                ,DOFCIDUMP,DoBlockDMRG,DoDice,DoGradPDFT,
+     &                DoCheMPS2
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif
@@ -100,7 +101,8 @@
      &                , dice_stoc, dice_restart
 #endif
       COMMON/LOGINP/  RFpert,lSquare, Start_Vectors, NonEq, DoFaro
-     &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT,DoDice
+     &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT,DoDice,
+     &                DoCheMPS2
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif

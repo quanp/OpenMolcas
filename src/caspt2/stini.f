@@ -45,7 +45,8 @@ C     indices
 
 * WITH NEW CI, RECOMPUTE 1- AND 2-DENSITY FOR ROOT STATE JSTATE:
       CALL GETMEM('LCI','ALLO','REAL',LCI,NCONF)
-      IF(.NOT.DoCumulant.AND.ISCF.EQ.0) THEN
+      IF(.NOT.DoCumulant.AND..NOT.DoExactRDM
+     &                  .AND.ISCF.EQ.0) THEN
         IDCI=IDTCEX
         DO J=1,JSTATE-1
           CALL DDAFILE(LUCIEX,0,WORK(LCI),NCONF,IDCI)

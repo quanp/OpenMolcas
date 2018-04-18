@@ -128,13 +128,13 @@
       ELSE
         If ( ISCF.eq.0 ) then
            WRITE(6,Fmt1) 'This is a CASSCF or RASSCF reference function'
-#ifdef _ENABLE_BLOCK_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
            If (DoCumulant) then
               write(6,Fmt1) 'Using 4-RDM cumulant approximation,' //
      &                      ' activated by 3RDM keyword in RASSCF'
            End If
-#elif _ENABLE_CHEMPS2_DMRG_
-           If (DoCumulant) then
+
+           If (DoExactRDM) then
             write(6,Fmt1) 'This is a DMRG reference with exact 4-RDM,'//
      &                    ' activated by 3RDM keyword in RASSCF'
             if (DoTranRDM) then

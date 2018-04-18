@@ -534,7 +534,8 @@ c           IF (NACTEL.GT.0) THEN
                call mpsrot(work(lsmat),nac,nrs2,nsym)
 #endif
 #endif
-             else if(doBlockDMRG .or. iDoNECI .or. doDice)then
+             else if(doBlockDMRG .or. iDoNECI .or. doDice
+     &                           .or. doCheMPS2) then
              else !CI
                IDISK=IADR15(4)
                CALL LUCIA_UTIL('TRACI',IDISK,JOBIPH,WORK(LSMAT))

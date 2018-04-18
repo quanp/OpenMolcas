@@ -33,7 +33,7 @@ C energies.
 
 C Not called, if .NOT.IFMIX, then only the new CI coefficients are
 C printed, no JOBMIX file is created.
-      IF (DOCUMULANT .OR. (.NOT.IFMIX)) RETURN
+      IF (DOCUMULANT .OR. DOEXACTRDM .OR. (.NOT.IFMIX)) RETURN
 
       IF(IFMSCOUP) THEN
         IF(IPRGLB.GE.USUAL) THEN

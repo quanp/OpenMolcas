@@ -60,6 +60,8 @@ Inactive
 9 6 0 1
 Ras2
 0 0 2 2
+
+CISOlver = CHEMPS2
 CIROOT = 2 2 1
 DMRG = 1000
 

@@ -195,7 +195,7 @@ C Local print level (if any)
 #endif
 
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
-      If(.Not.DoBlockDMRG) GoTo 113
+      If(.Not.DoBlockDMRG .AND. .NOT.DoCheMPS2) GoTo 113
 
       Line=''
       Write(Line(left-2:),'(A)') 'DMRG sweep specifications:'
@@ -207,11 +207,14 @@ C Local print level (if any)
       Write(LF,Fmt2//'A,T45,I6)')'Number of root(s) required',
      &                           NROOTS
 #ifdef _ENABLE_BLOCK_DMRG_
+      if (DoBlockDMRG) then
       Write(LF,Fmt2//'A,T45,T100)')'Occupation guess',
      &                           BLOCKOCC
+      endif
 #endif
 
 #ifdef _ENABLE_CHEMPS2_DMRG_
+      if (DoCheMPS2) then
       Write(LF,Fmt2//'A,T45,I6)')'Maximum number of sweeps',
      &                           max_sweep
       Write(LF,Fmt2//'A,T45,I6)')'Maximum number of sweeps in RDM',
@@ -240,6 +243,7 @@ C Local print level (if any)
       elseif ((chemps2_can.EQV..False.) .and. (Do3RDM.EQV..True.)) then
         Write(LF,Fmt2//'A,T45)')
      & 'Using non-pseudocanonical in 3-RDM and F.4-RDM'
+      endif
       endif
 #endif
 

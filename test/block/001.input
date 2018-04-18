@@ -43,6 +43,7 @@ Inactive
 Ras2
 0 0 2 2
 CIROOT = 1 1 ; 1
+CISOlver = BLOCK
 DMRG = 1000
 3RDM
 HFOC = 2 0 2 0

@@ -174,12 +174,20 @@ C Local print level (if any)
                  Call GetMem('PAtmp','ALLO','REAL',LW9,NACPR2)
                  CALL GETMEM('PTscr','ALLO','REAL',LW10,NACT4)
 #ifdef _ENABLE_BLOCK_DMRG_
+                 if (doBlockDMRG) then
                  CALL block_densi_rasscf(IPCMRoot,Work(LW6),Work(LW7),
      &                                   Work(LW8),Work(LW9),Work(LW10))
-#elif _ENABLE_CHEMPS2_DMRG_
+                 endif
+#endif
+
+#ifdef _ENABLE_CHEMPS2_DMRG_
+                 if (doCheMPS2) then
                  CALL chemps2_densi_rasscf(IPCMRoot,Work(LW6),Work(LW7),
      &                                 Work(LW8),Work(LW9),Work(LW10))
-#elif _DICE_
+                 endif
+#endif
+
+#ifdef _DICE_
                  CALL dice_densi_rasscf(IPCMRoot,Work(LW6),Work(LW7),
      &                                 Work(LW8),Work(LW9),Work(LW10))
 #endif
@@ -267,14 +275,22 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
           Call Get_TUVX(Work(ipTmpPUVX),Work(ipTmpTUVX))
           Call DaXpY_(NACPR2,1.0d0,TUVX,1,Work(ipTmpTUVX),1)
 #ifdef _ENABLE_BLOCK_DMRG_
+          if (doBlockDMRG) then
           Call BlockCtl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
-#elif _ENABLE_CHEMPS2_DMRG_
+          endif
+#endif
+
+#ifdef _ENABLE_CHEMPS2_DMRG_
+          if (doCheMPS2) then
           if (chemps2_can.EQV..True.) then
             Call Chemps2Ctl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
           else
             Call Chemps2Ctl_nocan(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
           endif
-#elif _DICE_
+          endif
+#endif
+
+#ifdef _DICE_
           Call DiceCtl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
 #endif
 
@@ -282,14 +298,22 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
           Call GetMem('TmpPUVX','Free','Real',ipTmpPUVX,nTmpPUVX)
         Else
 #ifdef _ENABLE_BLOCK_DMRG_
+          if (doBlockDMRG) then
           Call BlockCtl(Work(LW1),TUVX,IFINAL,IRst)
-#elif _ENABLE_CHEMPS2_DMRG_
+          endif
+#endif
+
+#ifdef _ENABLE_CHEMPS2_DMRG_
+          if (doCheMPS2) then
           if (chemps2_can.EQV..True.) then
             Call Chemps2Ctl(Work(LW1),TUVX,IFINAL,IRst)
           else
             Call Chemps2Ctl_nocan(Work(LW1),TUVX,IFINAL,IRst)
           endif
-#elif _DICE_
+          endif
+#endif
+
+#ifdef _DICE_
           Call DiceCtl(Work(LW1),TUVX,IFINAL,IRst)
 #endif
         End If
@@ -329,12 +353,20 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
           NACT4=NAC**4
           CALL GETMEM('PTscr','ALLO','REAL',LW10,NACT4)
 #ifdef _ENABLE_BLOCK_DMRG_
+          if (doBlockDMRG) then
           CALL block_densi_rasscf(jRoot,Work(LW6),Work(LW7),
      &                            Work(LW8),Work(LW9),Work(LW10))
-#elif _ENABLE_CHEMPS2_DMRG_
+          endif
+#endif
+
+#ifdef _ENABLE_CHEMPS2_DMRG_
+          if (doCheMPS2) then
           CALL chemps2_densi_rasscf(jRoot,Work(LW6),Work(LW7),
      &                              Work(LW8),Work(LW9),Work(LW10))
-#elif _DICE_
+          endif
+#endif
+
+#ifdef _DICE_
           CALL dice_densi_rasscf(jRoot,Work(LW6),Work(LW7),
      &                            Work(LW8),Work(LW9),Work(LW10))
 #endif

@@ -61,6 +61,7 @@ Inactive
 Ras2
 0 0 2 2
 CIROOT = 1 1 ; 1
+CISOlver = CHEMPS2
 DMRG = 1000
 3RDM
 
@@ -82,6 +83,8 @@ Inactive
 Ras2
 0 0 2 2
 CIROOT = 1 2 ; 2
+
+CISOlver = CHEMPS2
 DMRG = 1000
 3RDM
 
