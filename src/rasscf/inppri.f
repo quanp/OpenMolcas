@@ -263,6 +263,10 @@ C.. for GAS
      &                           dice_eps2
       Write(LF,Fmt2//'A,T45,I6)')'SampleN',
      &                           dice_sampleN
+      Write(LF,Fmt2//'A,T45)')'Occupation guess'
+      do iref_dice=1,nref_dice
+         write(LF,Fmt2//'A)') trim(diceocc(iref_dice))
+      enddo
       Call CollapseOutput(0,'DICE specifications:')
 
 *     Skip printing CI specifications in DICE

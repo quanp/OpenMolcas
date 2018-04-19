@@ -2877,7 +2877,8 @@ c       write(6,*)          '  --------------------------------------'
        ReadStatus=' Failure reading data after HFOC keyword.'
        Read(LUInput,*,End=9910,Err=9920) nref_dice
        do iref_dice=1,nref_dice
-          Read(LUInput,*,End=9910,Err=9920) diceocc(iref_dice)
+          Read(LUInput,'(A)',End=9910,Err=9920) diceocc(iref_dice)
+          call molcas2dice(diceocc(iref_dice))
        enddo
        ReadStatus=' O.K. after reading data after HFOC keyword.'
        Call ChkIfKey()
