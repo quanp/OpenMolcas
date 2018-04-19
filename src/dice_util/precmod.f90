@@ -11,6 +11,8 @@
 ! Copyright (C) 2018                                                   *
 !***********************************************************************
 ! String utilites from George Benthien
+! Approved for using by George Benthien
+! http://gbenthien.net/strings/str-index.html
 
 module precision
 
