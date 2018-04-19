@@ -47,7 +47,7 @@ C     indices
 C     work-array pointers
       INTEGER LCI,LCMO2,LFOCK
       INTEGER NFOCK,NFES
-#if defined _ENABLE_BLOCK_DMRG_ || _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
       INTEGER LXMAT,NXMAT
 #endif
 C     #orbitals per symmetry
@@ -226,7 +226,7 @@ C     #orbitals per symmetry
 C Finally, loop again over symmetries, transforming the CI:
       IF(ISCF.EQ.0) THEN
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
-        IF(.NOT.DoCumulant) THEN
+        IF(.NOT.DoCumulant .AND. .NOT.DoExactRDM) THEN
 #endif
           CALL GETMEM('LCI3','ALLO','REAL',LCI,NCONF)
           IDR=IDCIEX
@@ -270,13 +270,11 @@ C Finally, loop again over symmetries, transforming the CI:
            CALL DDAFILE(LUCIEX,1,WORK(LCI),NCONF,IDW)
           END DO
           CALL GETMEM('LCI3','FREE','REAL',LCI,NCONF)
-#ifdef _ENABLE_BLOCK_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
         ELSE
-* Transforming 2,3-RDMs from Block DMRG (1-RDM is computed from 2-RDM)
-* NN.14 : For the time, Block's dump files of RDMs are directly loaded,
-*         but those should be stored in JobIph file eventually.
+#ifdef _ENABLE_BLOCK_DMRG_
+          if (DoCumulant) then
           NXMAT=NASHT**2
-* Workspace for transformation matrix
           CALL GETMEM('XMAT','ALLO','REAL',LXMAT,NXMAT)
           CALL DCOPY_(NXMAT,0.0D0,0,WORK(LXMAT),1)
           CALL MKXMAT(TORB,WORK(LXMAT))
@@ -285,9 +283,11 @@ C Finally, loop again over symmetries, transforming the CI:
           CALL block_tran3pdm(NASHT,WORK(LXMAT),JSTATE,JSTATE)
 
           CALL GETMEM('XMAT','FREE','REAL',LXMAT,NXMAT)
-        END IF
-#elif _ENABLE_CHEMPS2_DMRG_
-        ELSE
+          endif
+#endif
+
+#ifdef _ENABLE_CHEMPS2_DMRG_
+          if (doExactRDM) then
           if (DoTranRDM.EQV..True.) then
             write(6,*) 'CHEMPS2> Transform RDMs into '//
      &                         'pseudocanonical basis'
@@ -307,6 +307,8 @@ C Finally, loop again over symmetries, transforming the CI:
             write(6,*) 'CHEMPS2> CheMPS2 assumes '//
      &                         'pseudocanonical orbitals'
           endif
+          endif
+#endif
 
         END IF
 #endif

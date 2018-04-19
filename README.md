@@ -14,6 +14,13 @@ General Public License (LGPL). Some parts of Molcas remain under a different
 license by decision of their authors (or impossibility to reach them), and are
 therefore not included in OpenMolcas.
 
+Note
+------------
+This copy of OpenMolcas has different novel CI Solvers for CASSCF, including 
+Block (G. K-.L. Chan), CheMPS2 (S. Wouters), and Dice (S. Sharma).
+
+Check wiki for installation and manual.
+
 Installation
 ------------
 
@@ -54,7 +61,6 @@ up and running is the following:
     ```
     pymolcas verify
     ```
-6.  Installing Molcas-CheMPS2 interface
 
 For running other calculations you should define the `MOLCAS` environment
 variable to point to the `build` directory. Run `pymolcas --help` to see the

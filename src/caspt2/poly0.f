@@ -43,7 +43,7 @@ C first by RAS type, then by symmetry.
           ITABS=ITABS+1
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
 ! Quan: Bug in LEVEL(ITABS) and L2ACT
-          if (DoCumulant) then
+          if (DoCumulant .OR. DoExactRDM) then
              do iq=1,NLEV
                LEVEL(iq)=iq
                L2ACT(iq)=iq
@@ -61,7 +61,7 @@ C INITIALIZE SPLIT-GRAPH GUGA DATA SETS:
       END DO
       NCSF(LSYM)=1
 
-      IF ((.NOT.DoCumulant).AND.
+      IF ((.NOT.DoCumulant).AND.(.NOT.DoExactRDM).AND.
      &    (NACTEL.GT.0).AND.(ISCF.EQ.0)) CALL GINIT_CP2
       MXCI=1
       DO I=1,NSYM

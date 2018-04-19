@@ -235,7 +235,8 @@ CSVC: initialize the reference wavefunction data
 C IDCIEX: Present EOF on LUCIEX.
       ID=IDCIEX
 C Skip when using cumulant reconstruction of (3-,) 4-RDM
-      IF((.Not.DoCumulant).AND.(ISCF.EQ.0)) THEN
+      IF((.Not.DoCumulant).AND.(.Not.DoExactRDM)
+     &                    .AND.(ISCF.EQ.0)) THEN
         CALL GETMEM('LCI','ALLO','REAL',LCI,NCONF)
         DO I=1,NSTATE
           ISNUM=MSTATE(I)
@@ -273,7 +274,8 @@ C Dummy writes:
       ELSE
 * If this is Closed-shell or Hi-spin SCF case
 * Just in case...
-        IF (.Not.DoCumulant .and. (NSTATE.ne.1 .or. NCONF.ne.1)) THEN
+        IF (.Not.DoCumulant .and. .Not.DoExactRDM .and.
+     &         (NSTATE.ne.1 .or. NCONF.ne.1)) THEN
           write(6,*)' readin_caspt2: A Closed-shell or Hi-spin SCF'
           write(6,*)' but nr of states is: NSTATE=', NSTATE
           write(6,*)' and nr of CSFs is    NCONF= ', NCONF

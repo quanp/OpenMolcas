@@ -96,7 +96,7 @@ C ALLOCATE SPACE FOR CORRESPONDING COMBINATIONS WITH H0:
       ELSE IF (ISCF.EQ.0) THEN
 C-SVC20100903: during mkfg3, NG3 is set to the actual value
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
-        IF(.NOT.DoCumulant) THEN
+        IF(.NOT.DoCumulant .AND. .NOT.DoExactRDM) THEN
 #endif
           CALL MKFG3(IFF,CI,WORK(LG1),WORK(LF1),WORK(LG2),WORK(LF2),
      &                      WORK(LG3),WORK(LF3),i1WORK(LidxG3))

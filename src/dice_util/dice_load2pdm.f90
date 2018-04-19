@@ -17,10 +17,11 @@ subroutine dice_load2pdm( NAC, PT, CHEMROOT )
   IMPLICIT NONE
   INTEGER, INTENT(IN) :: NAC, CHEMROOT
   REAL*8, INTENT(OUT) :: PT( NAC, NAC, NAC, NAC )
+  REAL*8 :: PTtemp
 
   CHARACTER(LEN=30) :: file_2rdm
 
-  INTEGER :: i, idx1, idx2, idx3, idx4, irdm, lu
+  INTEGER :: i, idx1, idx2, idx3, idx4, irdm, lu, ierr
   INTEGER :: nact
   character(len=10) :: rootindex
 
@@ -46,8 +47,14 @@ subroutine dice_load2pdm( NAC, PT, CHEMROOT )
     call abend()
   endif
 
-  do i=1,nact**4
-    read(LU,*) idx1, idx2, idx3, idx4, PT( idx1+1, idx3+1, idx4+1, idx2+1 )
+! Quan: Dice ignore all elements smaller than 1.0D-6
+  do
+    read(LU,*,IOSTAT=ierr) idx1, idx2, idx3, idx4, PTtemp
+    if (ierr == 0) then
+      PT( idx1+1, idx3+1, idx4+1, idx2+1 ) = PTtemp
+    else
+      exit
+    endif
   enddo
 
   close(LU)

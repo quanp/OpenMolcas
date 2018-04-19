@@ -61,6 +61,7 @@
 *
       Character*180  Line
       Character*8 NewJobIphName
+      Character*4 cisolver
       logical lExists, RunFile_Exists, RlxRCheck
 * Some strange extra logical variables...
       logical lOPTO
@@ -139,6 +140,7 @@ C   No changing about read in orbital information from INPORB yet.
 #endif
 * NN.14 Block DMRG flag
       DoBlockDMRG = .false.
+      DoCheMPS2   = .false.
 #ifdef _ENABLE_CHEMPS2_DMRG_
 ! Quan.16: CheMPS2 default flags
       chemps2_restart=.false.
@@ -149,6 +151,7 @@ C   No changing about read in orbital information from INPORB yet.
       max_sweep = 8
       chemps2_noise = 0.05
       max_canonical = max_sweep*5
+      hfocc = 0
 #endif
 
 ! Quan.17: Dice default flags
@@ -2679,12 +2682,29 @@ c       write(6,*)          '  --------------------------------------'
        Call SetPos(LUInput,'EXPA',Line,iRc)
        Call ChkIfKey()
       End If
+
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
+*
+*---  Process CISO command --------------------------------------------*
+      cisolver = ''
+      If (KeyCISO) Then
+       Call SetPos(LUInput,'CISO',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after CISO keyword.'
+       cisolver=Get_Ln(LUInput)
+       Call ChkIfKey()
+      End If
+
+      if (cisolver .EQ. 'BLOC') then
+        DoBlockDMRG = .True.
+        write(6,*) 'Using BLOCK as the CI solver'
+      elseif (cisolver .EQ. 'CHEM') then
+        DoCheMPS2 = .True.
+        write(6,*) 'Using CHEMPS2 as the CI solver'
+      endif
 *
 *---  Process DMRG command --------------------------------------------*
-#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
       If (KeyDMRG) Then
-* NN.14 FIXME: When DMRG option is disabled at compilation,
-*       this should give an error, but just ignored for the time.
        If (DBG) Then
          Write(6,*) ' DMRG (Use DMRG algorithm instead of FCI)'
        End If
@@ -2694,17 +2714,30 @@ c       write(6,*)          '  --------------------------------------'
        Read(LUInput,*,End=9910,Err=9920) MxDMRG
        ReadStatus=' O.K. after reading data after DMRG keyword.'
        If (DBG) Write(6,*) ' Nr. of states=',MxDMRG
-       DoBlockDMRG=.True.
        Call ChkIfKey()
       End If
+*
+*---  Process HFOC command --------------------------------------------*
+      if (DoBlockDMRG) then
+        Blockocc = ' integral'
+        If (KeyHFOC) Then
+          Call SetPos(LUInput,'HFOC',Line,iRc)
+          If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+          ReadStatus=' Failure reading data after HFOC keyword.'
+          Blockocc=Get_Ln(LUInput)
+          write(6,*) Blockocc
+          Call ChkIfKey()
+        End If
+      endif
 *
 *---  Process 3RDM command --------------------------------------------*
       If (Key3RDM) Then
        If (DBG) Then
-         Write(6,*) ' 3RDM (Compute 3RDM for DMRG-Cu4-CASPT2)'
+         Write(6,*) ' 3RDM (Compute 3RDM for DMRG-CASPT2)'
        End If
        Do3RDM=.True.
 #ifdef _ENABLE_CHEMPS2_DMRG_
+       if (DoCheMPS2) then
        iOrbTyp = 2
        IPT2 = 1
        Write(6,*)
@@ -2713,6 +2746,7 @@ c       write(6,*)          '  --------------------------------------'
        if (KeySUPS) then
          write(6,*) 'CHEMPS2> Bug using SYPSym and 3RDM, disable SUPSYm'
          Call Abend()
+       endif
        endif
 #endif
        Call SetPos(LUInput,'3RDM',Line,iRc)
@@ -2802,6 +2836,18 @@ c       write(6,*)          '  --------------------------------------'
        ReadStatus=' O.K. after reading data after MXCA keyword.'
        Call ChkIfKey()
       End If
+*
+*---  Process HFOC command --------------------------------------------*
+      if (DoCheMPS2) then
+      If (KeyHFOC) Then
+       If (DBG) Write(6,*) ' HFOC keyword was given.'
+       Call SetPos(LUInput,'HFOC',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading after HFOC keyword.'
+       Read(LUInput,*,End=9910,Err=9920) (HFOCC(i),i=1,NASHT)
+       ReadStatus=' O.K. reading after HFOC keyword.'
+      End If
+      endif
 #endif
 
 #endif
@@ -2824,20 +2870,17 @@ c       write(6,*)          '  --------------------------------------'
        Call ChkIfKey()
       End If
 *---  Process HFOC command --------------------------------------------*
-      HFOCC = ''
+      DICEOCC = ''
       If (KeyHFOC) Then
        Call SetPos(LUInput,'HFOC',Line,iRc)
        If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
        ReadStatus=' Failure reading data after HFOC keyword.'
        Read(LUInput,*,End=9910,Err=9920) nref_dice
        do iref_dice=1,nref_dice
-          Read(LUInput,*,End=9910,Err=9920) hfocc(iref_dice)
+          Read(LUInput,'(A)',End=9910,Err=9920) diceocc(iref_dice)
+          call molcas2dice(diceocc(iref_dice))
        enddo
        ReadStatus=' O.K. after reading data after HFOC keyword.'
-*       write(6,*) 'DICE: DB> NREF_DICE', nref_dice
-*       do iref_dice=1,nref_dice
-*          write(6,*) 'DICE: DB> HFOCC', hfocc(iref_dice)
-*       enddo
        Call ChkIfKey()
       End If
 *---  Process EPSI command --------------------------------------------*
@@ -3081,7 +3124,7 @@ C Test read failed. JOBOLD cannot be used.
 *
 *     In DMRG-CASSCF, skip GUGA and LUCIA settings
       NCONF=1
-      If(DoBlockDMRG .OR. DoDice) GoTo 9000
+      If(DoBlockDMRG .OR. DoDice .OR. DoCheMPS2) GoTo 9000
 * ===============================================================
 *
 *     Construct the Guga tables

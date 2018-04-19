@@ -474,7 +474,8 @@ Cbjp
 
 !Quan: Fix bug, skip Lucia stuff with DMRG
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
-      if (.not.(doBlockDMRG) .AND. .not.(doDice)) then
+      if (.not.(doBlockDMRG) .AND. .not.(doDice)
+     &                       .AND. .not.(doCheMPS2)) then
 #elif defined _DMRG_
       if(.not.doDMRG)then
 #endif

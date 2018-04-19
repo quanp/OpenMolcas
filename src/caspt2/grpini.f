@@ -92,8 +92,7 @@
         IF(ISCF.NE.0) THEN
 * Then we still need the "CI array": It is used in subroutine calls
          WORK(LCI)=1.0D0
-        ELSE IF(DoCumulant) THEN
-*          write(6,*) 'Cumulant approximated 4RDM'
+        ELSE IF(DoCumulant .OR. DoExactRDM) THEN
          WORK(LCI)=0.0D0
         ELSE
 * Get the CI array:
@@ -144,7 +143,7 @@ c Modify the Fock matrix, if needed:
 * NN.15
 * TODO : MKFOP and following transformation are skipped in DMRG-CASPT2 run
 *        for the time, this will be fixed later to implement DMRG-MS-CASPT2.
-      IF(DoCumulant) GoTo 100
+      IF(DoCumulant .OR. DoExactRDM) GoTo 100
 
 * Compute elements of Hamiltonian matrix obtained as
 * <BRA|FOP|KET> where FOP is the average Fock operator (FIFA)

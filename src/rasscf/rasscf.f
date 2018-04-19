@@ -747,7 +747,7 @@ c At this point all is ready to potentially dump MO integrals... just do it if r
         Call Timing(Swatch,Swatch,Zenith_1,Swatch)
 
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
-            If(DoBlockDMRG .OR. DoDice) Then
+            If(DoBlockDMRG .OR. DoDice .OR. DoCheMPS2) Then
               CALL DMRGCTL(WORK(LCMO),
      &                 WORK(LDMAT),WORK(LDSPN),WORK(LPMAT),WORK(LPA),
      &                 WORK(LFI),WORK(LD1I),WORK(LD1A),
@@ -1045,7 +1045,7 @@ c.. upt to here, jobiph are all zeros at iadr15(2)
 
         Call Timing(Swatch,Swatch,Zenith_1,Swatch)
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
-        If(DoBlockDMRG .OR. doDice) Then
+        If(DoBlockDMRG .OR. doDice .OR. DoCheMPS2) Then
           CALL DMRGCTL(WORK(LCMO),
      &           WORK(LDMAT),WORK(LDSPN),WORK(LPMAT),WORK(LPA),
      &           WORK(LFI),WORK(LD1I),WORK(LD1A),
@@ -1699,7 +1699,7 @@ c Clean-close as much as you can the CASDFT stuff...
       Call Timing(Swatch,Swatch,Zenith_1,Swatch)
 
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_ || defined _DICE_
-      If(DoBlockDMRG .OR. doDice) Then
+      If(DoBlockDMRG .OR. doDice .OR. DoCheMPS2) Then
         CALL DMRGCTL(WORK(LCMO),
      &           WORK(LDMAT),WORK(LDSPN),WORK(LPMAT),WORK(LPA),
      &           WORK(LFI),WORK(LD1I),WORK(LD1A),
@@ -1963,7 +1963,8 @@ c deallocating detorb... allocated in proc_inp.f used throughout the iterations
 
 *
 * Skip Lucia stuff if NECI or BLOCK-DMRG is on
-       If(.not.(iDoNECI.or.doDMRG.or.doBlockDMRG.or.doDice)) then
+       If(.not.(iDoNECI.or.doDMRG.or.doBlockDMRG
+     &                 .or.doDice.or.DoCheMPS2)) then
           Call Lucia_Util('CLOSE',iDummy,iDummy,Dummy)
        end if
        if(iDoNECI) then
@@ -2016,8 +2017,8 @@ c      End If
          EndIf
       EndIf
 
-      if(.not.(iDoGas.or.doDMRG.or.doBlockDMRG.or.iDoNeci.or.doDice))
-     &                                                           then
+      if(.not.(iDoGas.or.doDMRG.or.doBlockDMRG.or.iDoNeci
+     &               .or.doDice.or.doCheMPS2)) then
         Call MKGUGA_FREE
       end if
 

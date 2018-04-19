@@ -166,6 +166,8 @@ C are not supported with stdalloc. Hence, the infraction.
       Logical :: DoCumulant = .False.
       ! CHTR
       Logical :: DoTranRDM = .False.
+      ! CHEM
+      Logical :: doExactRDM = .False.
       End Type
 
 #ifdef ALLOC_SCAL
@@ -557,16 +559,12 @@ C as if the values were read directly from the file.
 #ifdef _ENABLE_BLOCK_DMRG_
       Case('CUMU')
       Input % DoCumulant = .True.
-#elif _ENABLE_CHEMPS2_DMRG_
+#endif
+
+#ifdef _ENABLE_CHEMPS2_DMRG_
       Case('CHEM')
-!Quan: Using the same variable DoCumulant in Block
-      Input % DoCumulant = .True.
+      Input % doExactRDM = .True.
       dochemps2 = .True.
-!      if (nStates.GT.1) then
-!       write(6,*) 'CHEMPS2> Only State Specific calculation supported'
-!Quan: FIXME: nStates not defined
-!       Call Quit_OnUserError
-!      endif
 
       Case('CHTR')
       Input % DoTranRDM = .True.

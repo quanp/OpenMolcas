@@ -530,23 +530,18 @@ C  only for the G1 and G2 replicate arrays
       CALL GADSUM(F2,NG2)
 
 #ifdef _ENABLE_BLOCK_DMRG_
+      if (doCumulant) then
       NLEV4=NLEV2**2
-C
-C allocate work space to store 3RDM
       Call GETMEM('G3TMP','ALLO','REAL',LG3TMP,NLEV4)
-C
-C TODO: Here, several options to compute F3.
-C Currently implemented only cu4, but cu34 and F3 from DMRG-sweep
-C will be possible. They should be implemented at this section.
-C
-C MKFG3CU4 is located under block_dmrg_util/
       Call MKFG3CU4(IFF,G1,F1,G2,F2,G3,F3,idxG3,Work(LG3TMP))
-C
       Call GETMEM('G3TMP','FREE','REAL',LG3TMP,NLEV4)
+      endif
 #endif
 
 #ifdef _ENABLE_CHEMPS2_DMRG_
+      if (doExactRDM) then
       Call mkfg3chemps2(IFF,G1,F1,G2,F2,G3,F3,idxG3)
+      endif
 #endif
 
       IF(iPrGlb.GE.DEBUG) THEN

@@ -48,6 +48,9 @@
       Character*8   Fmt1,Fmt2,Label
       Character*120  Line,BlLine,StLine
       Character*3 lIrrep(8)
+#ifdef _ENABLE_CHEMPS2_DMRG_
+      Character*3 SNAC
+#endif
       Logical DoCholesky
       Logical DoLocK,Deco, lOPTO, l_casdft
       Real*8  dmpK
@@ -239,6 +242,12 @@ C.. for GAS
 #ifdef _DICE_
       if(.Not.DoDice) GoTo 113
       Line=' '
+      Write(LF,Fmt2//'A,T45)') 'Please cite the following papers'
+      Write(LF,Fmt2//'A,T80)') '(https://sanshar.github.io/
+     &Dice/overview.html#license-and-how-to-cite)'
+      Write(LF,Fmt2//'A,T45)') 'JCTC, 2017, 13, 1595'
+      Write(LF,Fmt2//'A,T45)') 'JCTC, 2016, 12, 3674'
+
       Write(Line(left-2:),'(A)') 'DICE specifications:'
       Call CollapseOutput(1,Line)
       Write(LF,Fmt1)'--------------------------'
@@ -254,6 +263,10 @@ C.. for GAS
      &                           dice_eps2
       Write(LF,Fmt2//'A,T45,I6)')'SampleN',
      &                           dice_sampleN
+      Write(LF,Fmt2//'A,T45)')'Occupation guess'
+      do iref_dice=1,nref_dice
+         write(LF,Fmt2//'A)') trim(diceocc(iref_dice))
+      enddo
       Call CollapseOutput(0,'DICE specifications:')
 
 *     Skip printing CI specifications in DICE
@@ -264,7 +277,7 @@ C.. for GAS
 
 
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
-      If(.Not.DoBlockDMRG) GoTo 113
+      If(.Not.DoBlockDMRG .AND. .Not.DoCheMPS2) GoTo 113
 
 
       Line=' '
@@ -276,8 +289,15 @@ C.. for GAS
      &                           MxDMRG
       Write(LF,Fmt2//'A,T45,I6)')'Number of root(s) required',
      &                           NROOTS
+#ifdef _ENABLE_BLOCK_DMRG_
+      if (DoBlockDMRG) then
+      Write(LF,Fmt2//'A,T45,T100)')'Occupation guess',
+     &                           BLOCKOCC
+      endif
+#endif
 
 #ifdef _ENABLE_CHEMPS2_DMRG_
+      if (DoCheMPS2) then
       Write(LF,Fmt2//'A,T45,I6)')'Maximum number of sweeps',
      &                           max_sweep
       Write(LF,Fmt2//'A,T45,I6)')'Maximum number of sweeps in RDM',
@@ -296,12 +316,17 @@ C.. for GAS
      &                           Do3RDM
       Write(LF,Fmt2//'A,T45,I6)')'Restart scheme in 3-RDM and F.4-RDM',
      &                           chemps2_lrestart
+      write(SNAC, '(I3)') NAC
+      Write(LF,Fmt2//'A,T45,'//trim(adjustl(SNAC))//'I2)')
+     &                           'Occupation guess',
+     &                           (HFOCC(ihfocc), ihfocc=1,NAC)
       if ((chemps2_can.EQV..True.) .and. (Do3RDM.EQV..True.)) then
         Write(LF,Fmt2//'A,T45)')
      & 'Using pseudocanonical in 3-RDM and F.4-RDM'
       elseif ((chemps2_can.EQV..False.) .and. (Do3RDM.EQV..True.)) then
         Write(LF,Fmt2//'A,T45)')
      & 'Using non-pseudocanonical in 3-RDM and F.4-RDM'
+      endif
       endif
 
 #endif
@@ -474,6 +499,7 @@ C.. for GAS
 *              since Block DMRG code will check this internally
 *     If (NROOTS .GT. NCSASM(LSYM)) Then
       If (.not.iDoNeci .and. .not.doDMRG .and. .not.doDice
+     $    .and. .not.doCheMPS2
      &    .and. .not.doBlockDMRG .and. NROOTS .GT. NCSASM(LSYM)) Then
          Write(LF,*) '************ ERROR ***********'
          Write(LF,*) ' You can''t ask for more roots'

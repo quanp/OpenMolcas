@@ -19,6 +19,10 @@
 
       Subroutine Chemps2Ctl_nocan( LW1, TUVX, IFINAL, IRST )
 
+#ifdef _MOLCAS_MPP_
+      Use MPI
+#endif
+
       Implicit Real*8 (A-H,O-Z)
 
       Dimension LW1(*), TUVX(*)
@@ -33,7 +37,7 @@
       Integer chemroot, chemps2_info
       character(len=10) :: rootindex
       character(len=100) :: imp1, imp2
-      Integer :: iOper(0:7)
+      Integer :: iOper(0:7), ihfocc
 
 #ifdef _MOLCAS_MPP_
       Integer*4 IERROR4
@@ -50,9 +54,6 @@
 #include "WrkSpc.fh"
 #include "output_ras.fh"
       Parameter (ROUTINE='CHEMPS2CTL_NOCAN')
-#ifdef _MOLCAS_MPP_
-#include "mpif.h"
-#endif
       Call qEnter(ROUTINE)
 
       chemps2_lrestart = 2
@@ -333,6 +334,15 @@
       write(LUCHEMIN,*) 'MOLCAS_FIEDLER = TRUE'
       write(LUCHEMIN,*) 'MOLCAS_STATE_AVG = TRUE'
       write(LUCHEMIN,*) 'MOLCAS_2RDM    = molcas_2rdm.h5'
+
+      if (sum(hfocc) .NE. 0) then
+        write(LUCHEMIN,'(A13)',ADVANCE='NO') 'MOLCAS_OCC ='
+        do ihfocc=1,NAC-1
+          write(LUCHEMIN,'(I3,A2)', ADVANCE='NO') HFOCC(ihfocc), ', '
+        enddo
+        write(LUCHEMIN,'(I3)') HFOCC(NAC)
+      endif
+
       If (IFINAL.EQ.2 .AND. Do3RDM .AND. NACTEL.GT.2) Then
          write(6,*)  'CHEMPS2> Running 3-RDM and F.4-RDM'
          write(LUCHEMIN,*) 'MOLCAS_3RDM    = molcas_3rdm.h5'

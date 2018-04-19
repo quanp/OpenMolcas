@@ -29,7 +29,7 @@ C  Deallocates everything concerned with SGUGA, incl CI array.
 #include "WrkSpc.fh"
 #include "pt2_guga.fh"
 
-      IF(DoCumulant) RETURN
+      IF(DoCumulant .or. DoExactRDM) RETURN
       IF(NACTEL.EQ.0) RETURN
       IF(ISCF.NE.0) RETURN
       CALL GETMEM('MVL','FREE','INTEG',LMVL,NMVL)

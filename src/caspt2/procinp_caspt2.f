@@ -131,7 +131,8 @@ C     really parallel or not.
       NLYROOT=0
 
       DoCumulant = Input%DoCumulant
-      DoTranRDM = Input%DoTranRDM
+      DoTranRDM  = Input%DoTranRDM
+      DoExactRDM = Input%DoExactRDM
 
 ************************************************************************
 *

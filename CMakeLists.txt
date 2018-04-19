@@ -1651,9 +1651,9 @@ else ()
         message ("DICE interface DISABLED")
 endif ()
 
-if (BLOCK AND CHEMPS2)
-        message (FATAL_ERROR "BLOCK and CHEMPS2 options are not compatible.")
-endif ()
+#if (BLOCK AND CHEMPS2)
+#        message (FATAL_ERROR "BLOCK and CHEMPS2 options are not compatible.")
+#endif ()
 
 # GPerfTools: CPU profiling
 #==========================

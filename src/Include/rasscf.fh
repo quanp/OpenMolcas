@@ -64,7 +64,8 @@
      &                iRlxRoot,n_Det,iAlphaBeta,
      &                MxDMRG,INOCALC,ISAVE_EXP,IEXPAND,hRoots
 #ifdef _ENABLE_CHEMPS2_DMRG_
-     &                ,max_sweep,chemps2_lrestart,max_canonical
+     &                ,max_sweep,chemps2_lrestart,max_canonical,
+     &                hfocc(100)
 #endif
 #ifdef _DICE_
      &                ,nref_dice,dice_sampleN,dice_iter
@@ -80,14 +81,16 @@
      &                iRlxRoot,n_Det,iAlphaBeta,
      &                MxDMRG,INOCALC,ISAVE_EXP,IEXPAND,hRoots
 #ifdef _ENABLE_CHEMPS2_DMRG_
-     &                ,max_sweep,chemps2_lrestart,max_canonical
+     &                ,max_sweep,chemps2_lrestart,max_canonical,
+     &                hfocc
 #endif
 #ifdef _DICE_
      &                ,nref_dice,dice_sampleN,dice_iter
 #endif
 *
       Logical         RFpert,lSquare, Start_Vectors, NonEq, DoFaro
-     &                ,DOFCIDUMP,DoBlockDMRG,DoDice,DoGradPDFT
+     &                ,DOFCIDUMP,DoBlockDMRG,DoDice,DoGradPDFT,
+     &                DoCheMPS2
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif
@@ -98,7 +101,8 @@
      &                , dice_stoc, dice_restart
 #endif
       COMMON/LOGINP/  RFpert,lSquare, Start_Vectors, NonEq, DoFaro
-     &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT,DoDice
+     &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT,DoDice,
+     &                DoCheMPS2
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif
@@ -115,9 +119,10 @@
       COMMON/RELINP/  PRWTHR,POTNUC,CCI(mxRoot,mxRef),
      &                TITLE,ECAS1,RLXGRD,EVAC
 *
-      Character(200)  HFOCC(20)
+      Character(200)  DICEOCC(20), blockocc
       Character(8)    IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY
-      COMMON/CHRINP/  IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY,HFOCC
+      COMMON/CHRINP/  IPHNAME,OutFmt1,OutFmt2,SXSEL,PURIFY,DICEOCC,
+     &                blockocc
 *
       INTEGER         iCIonly,NSM(mxOrb),KTIGHT
       COMMON/INTCI/   iCIonly,NSM,KTIGHT
