@@ -336,7 +336,7 @@
       write(LUCHEMIN,*) 'MOLCAS_2RDM    = molcas_2rdm.h5'
 
       if (sum(hfocc) .EQ. NACTEL) then
-        write(6,*)  'CHEMPS2> Using user-specifed ROHF guess'
+        write(6,*)  'CHEMPS2> Using user-specified ROHF guess'
         write(LUCHEMIN,'(A13)',ADVANCE='NO') 'MOLCAS_OCC ='
         do ihfocc=1,NAC-1
           write(LUCHEMIN,'(I3,A2)', ADVANCE='NO') HFOCC(ihfocc), ', '
