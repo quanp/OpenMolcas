@@ -151,8 +151,14 @@ C   No changing about read in orbital information from INPORB yet.
       max_sweep = 8
       chemps2_noise = 0.05
       max_canonical = max_sweep*5
-      hfocc = 0
 #endif
+* Init HFOCC array containing user defined occupancies for the active orbitals.
+* This array is used by DMRG codes (Block as well as ChemPS2).
+* Therefore I took it out of any ifdef preprocessing flag.
+
+      do i = 1, MxAct
+        hfocc(i) = 0
+      end do
 
 ! Quan.17: Dice default flags
 #ifdef _DICE_
@@ -2717,19 +2723,6 @@ c       write(6,*)          '  --------------------------------------'
        Call ChkIfKey()
       End If
 *
-*---  Process HFOC command --------------------------------------------*
-      if (DoBlockDMRG) then
-        Blockocc = ' integral'
-        If (KeyHFOC) Then
-          Call SetPos(LUInput,'HFOC',Line,iRc)
-          If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
-          ReadStatus=' Failure reading data after HFOC keyword.'
-          Blockocc=Get_Ln(LUInput)
-          write(6,*) Blockocc
-          Call ChkIfKey()
-        End If
-      endif
-*
 *---  Process 3RDM command --------------------------------------------*
       If (Key3RDM) Then
        If (DBG) Then
@@ -2836,21 +2829,19 @@ c       write(6,*)          '  --------------------------------------'
        ReadStatus=' O.K. after reading data after MXCA keyword.'
        Call ChkIfKey()
       End If
+#endif
+
+#endif
 *
 *---  Process HFOC command --------------------------------------------*
-      if (DoCheMPS2) then
       If (KeyHFOC) Then
        If (DBG) Write(6,*) ' HFOC keyword was given.'
        Call SetPos(LUInput,'HFOC',Line,iRc)
        If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
        ReadStatus=' Failure reading after HFOC keyword.'
-       Read(LUInput,*,End=9910,Err=9920) (HFOCC(i),i=1,NASHT)
+       Read(LUInput,*,End=9910,Err=9920) (hfocc(i),i=1,NASHT)
        ReadStatus=' O.K. reading after HFOC keyword.'
       End If
-      endif
-#endif
-
-#endif
 
 #ifdef _DICE_
 *---  Process DICE command --------------------------------------------*

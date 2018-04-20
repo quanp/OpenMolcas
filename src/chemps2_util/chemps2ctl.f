@@ -349,12 +349,15 @@
       write(LUCHEMIN,*) 'MOLCAS_STATE_AVG = TRUE'
       write(LUCHEMIN,*) 'MOLCAS_2RDM    = molcas_2rdm.h5'
 
-      if (sum(hfocc) .NE. 0) then
+      if (sum(hfocc) .EQ. NACTEL) then
+        write(6,*)  'CHEMPS2> Using user-specifed ROHF guess'
         write(LUCHEMIN,'(A13)',ADVANCE='NO') 'MOLCAS_OCC ='
         do ihfocc=1,NAC-1
           write(LUCHEMIN,'(I3,A2)', ADVANCE='NO') HFOCC(ihfocc), ', '
         enddo
         write(LUCHEMIN,'(I3)') HFOCC(NAC)
+      else
+        write(6,*)  'CHEMPS2> Using noise guess'
       endif
 
       If (IFINAL.EQ.2 .AND. Do3RDM .AND. NACTEL.GT.2) Then

@@ -53,28 +53,6 @@
       Parameter (ROUTINE='BLOCKCTL')
       Call qEnter(ROUTINE)
 
-* Load symmetry info from RunFile
-      Call Get_iScalar('NSYM',nIrrep)
-      Call Get_iArray('Symmetry operations',iOper,nIrrep)
-      Call Get_iScalar('Rotational Symmetry Number',iSigma)
-
-* Get character table to convert MOLPRO symmetry format
-      Call MOLPRO_ChTab(nSym,Label,iChMolpro)
-
-* Convert orbital symmetry into MOLPOR format
-      Call Getmem('OrbSym','Allo','Inte',lOrbSym,NAC)
-      iOrb=1
-      Do iSym=1,nSym
-        Do jOrb=1,NASH(iSym)
-          iWork(lOrbSym+iOrb-1)=iChMolpro(iSym)
-          iOrb=iOrb+1
-        End Do
-      End Do
-      lSymMolpro=iChMolpro(lSym)
-
-      NRDM_ORDER=2
-      If (NACTEL.EQ.1) NRDM_ORDER=1
-
 * Default setting for the first iteraction
       JRST=IRST
       ThDMRG=THRE*1.0d1
@@ -124,18 +102,42 @@
         End If
       End If
 
+* Load symmetry info from RunFile
+      Call Get_iScalar('NSYM',nIrrep)
+      Call Get_iArray('Symmetry operations',iOper,nIrrep)
+      Call Get_iScalar('Rotational Symmetry Number',iSigma)
+
+* Get character table to convert MOLPRO symmetry format
+      Call MOLPRO_ChTab(nSym,Label,iChMolpro)
+
+      NRDM_ORDER=2
+      If (NACTEL.EQ.1) NRDM_ORDER=1
+
+* Convert orbital symmetry into MOLPRO format
+      Call Getmem('OrbSym','Allo','Inte',lOrbSym,NAC)
+      iOrb=1
+      Do iSym=1,nSym
+        Do jOrb=1,NASH(iSym)
+          iWork(lOrbSym+iOrb-1)=iChMolpro(iSym)
+          iOrb=iOrb+1
+        End Do
+      End Do
+      lSymMolpro=iChMolpro(lSym)
+
 * Compute DMRG
       Call block_calldmrg(JRST,lRoots,NAC,NACTEL,ISPIN-1,
      &                    Label,lSymMolpro,iWork(lOrbSym),
      &                    0.0d0,LW1,TUVX,MxDMRG,NRDM_ORDER,
-     &                    ThDMRG,ThNoise,ENER(1,ITER),blockocc)
+     &                    ThDMRG,ThNoise,ENER(1,ITER),HFOCC,
+     &                    NRS2T)
 
       If (IFINAL.EQ.2 .AND. Do3RDM .AND. NACTEL.GT.2) Then
 * Compute 3RDM for DMRG-cu4-CASPT2
         Call block_calldmrg(1,lRoots,NAC,NACTEL,ISPIN-1,
      &                      Label,lSymMolpro,iWork(lOrbSym),
      &                      0.0d0,LW1,TUVX,MxDMRG,3,
-     &                      THRE,0.0d0,ENER(1,ITER),blockocc)
+     &                      THRE,0.0d0,ENER(1,ITER),HFOCC,
+     &                      NRS2T)
       End If
 
       Call Getmem('OrbSym','Free','Inte',lOrbSym,NAC)
