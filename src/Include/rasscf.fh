@@ -63,7 +63,7 @@
      &                ISUPSM,IORDEM,IFORDE,IPCMROOT,ICIRFROOT,
      &                iRlxRoot,n_Det,iAlphaBeta,
      &                MxDMRG,INOCALC,ISAVE_EXP,IEXPAND,hRoots,
-     &                hfocc(mxact)
+     &                hfocc(mxact), two2one
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
@@ -80,7 +80,7 @@
      &                ISUPSM,IORDEM,IFORDE,IPCMROOT,ICIRFROOT,
      &                iRlxRoot,n_Det,iAlphaBeta,
      &                MxDMRG,INOCALC,ISAVE_EXP,IEXPAND,hRoots,
-     &                hfocc
+     &                hfocc, two2one
 #ifdef _ENABLE_CHEMPS2_DMRG_
      &                ,max_sweep,chemps2_lrestart,max_canonical
 #endif
@@ -90,7 +90,7 @@
 *
       Logical         RFpert,lSquare, Start_Vectors, NonEq, DoFaro
      &                ,DOFCIDUMP,DoBlockDMRG,DoDice,DoGradPDFT,
-     &                DoCheMPS2
+     &                DoCheMPS2, blockrestart
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif
@@ -102,7 +102,7 @@
 #endif
       COMMON/LOGINP/  RFpert,lSquare, Start_Vectors, NonEq, DoFaro
      &                ,DOFCIDUMP,DoBlockDMRG,DoGradPDFT,DoDice,
-     &                DoCheMPS2
+     &                DoCheMPS2, blockrestart
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
      &                , Do3RDM
 #endif

@@ -130,6 +130,7 @@ option (NVBLAS "Enable NVidia BLAS library." OFF)
 option (FDE "Enable Frozen-density-embedding (FDE) interface." OFF)
 option (GROMACS "Compile Gromacs interface." OFF)
 option (BLOCK "Activate BLOCK-DMRG support." OFF)
+option (NEWBLOCK "Activate New BLOCK-DMRG support." OFF)
 option (CHEMPS2 "Activate CheMPS2-DMRG support." OFF)
 option (DICE "Activate DICE-SHCI support." OFF)
 
@@ -1579,6 +1580,41 @@ else ()
         message ("BLOCK interface DISABLED")
 endif ()
 
+# Chan group's DMRG (Block code) support, new version
+#====================================================
+if (NEWBLOCK)
+        mark_as_advanced(CLEAR BLOCK_DIR)
+
+        message ("Configuring New Block-DMRG support:")
+
+        # Since CMake build is not available in current Block code,
+        # suppose Block has been installed at ${BLOCK_DIR} for the time.
+        set (BLOCK_DIR ${BLOCK_DIR} CACHE PATH "Block installation path." FORCE)
+        if ("${BLOCK_DIR}" STREQUAL "")
+                message (FATAL_ERROR "You must supply a path for BLOCK_DIR.")
+        endif ()
+
+        if (EXISTS ${BLOCK_DIR}/block.spin_adapted)
+                foreach (prog
+                        caspt2
+                        rasscf
+                        )
+                        list (APPEND ${prog}_defs "_ENABLE_BLOCK_DMRG_")
+                        list (APPEND ${prog}_defs "_NEW_BLOCK_")
+                endforeach ()
+
+                message ("-- BLOCK_DIR: ${BLOCK_DIR}")
+
+        else ()
+                set (BLOCK OFF)
+                message ("-- BLOCK interface ignored (no BLOCK installation found at ${BLOCK_DIR})")
+                message ("BLOCK interface DISABLED")
+        endif ()
+else ()
+        mark_as_advanced(FORCE BLOCK_DIR)
+        message ("NEW BLOCK interface DISABLED")
+endif ()
+
 # S.Wouters' DMRG (CheMPS2 code) support
 #=======================================
 
@@ -1651,9 +1687,9 @@ else ()
         message ("DICE interface DISABLED")
 endif ()
 
-#if (BLOCK AND CHEMPS2)
-#        message (FATAL_ERROR "BLOCK and CHEMPS2 options are not compatible.")
-#endif ()
+if (BLOCK AND NEW_BLOCK)
+        message (FATAL_ERROR "BLOCK and NEWBLOCK options are not compatible.")
+endif ()
 
 # GPerfTools: CPU profiling
 #==========================
@@ -2266,6 +2302,18 @@ if (BLOCK)
         if (DEFINED ${util}_src)
                 list (APPEND utils ${util})
                 list (APPEND ${util}_defs "_ENABLE_BLOCK_DMRG_")
+        else ()
+                message (FATAL_ERROR "\"${util}\" not found in source directories")
+        endif ()
+endif ()
+
+if (NEWBLOCK)
+        set (util block_dmrg_util)
+        find_source(${util})
+        if (DEFINED ${util}_src)
+                list (APPEND utils ${util})
+                list (APPEND ${util}_defs "_ENABLE_BLOCK_DMRG_")
+                list (APPEND ${util}_defs "_NEW_BLOCK_")
         else ()
                 message (FATAL_ERROR "\"${util}\" not found in source directories")
         endif ()

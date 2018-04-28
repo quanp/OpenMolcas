@@ -141,6 +141,8 @@ C   No changing about read in orbital information from INPORB yet.
 * NN.14 Block DMRG flag
       DoBlockDMRG = .false.
       DoCheMPS2   = .false.
+      two2one     = 3
+      blockrestart = .false.
 #ifdef _ENABLE_CHEMPS2_DMRG_
 ! Quan.16: CheMPS2 default flags
       chemps2_restart=.false.
@@ -2723,6 +2725,25 @@ c       write(6,*)          '  --------------------------------------'
        Call ChkIfKey()
       End If
 *
+*---  Process BLRE command --------------------------------------------*
+      If (KeyBLRE) Then
+       If (DBG) Then
+         Write(6,*) ' Restart in Block'
+       End If
+       blockrestart=.True.
+       Call SetPos(LUInput,'BLRE',Line,iRc)
+       Call ChkIfKey()
+      End If
+*
+*---  Process T2O command --------------------------------------------*
+      If (KeyT2O) Then
+       Call SetPos(LUInput,'T2O ',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading data after MXSW keyword.'
+       Read(LUInput,*,End=9910,Err=9920) two2one
+       ReadStatus=' O.K. after reading data after MXSW keyword.'
+       Call ChkIfKey()
+      End If
 *---  Process 3RDM command --------------------------------------------*
       If (Key3RDM) Then
        If (DBG) Then
