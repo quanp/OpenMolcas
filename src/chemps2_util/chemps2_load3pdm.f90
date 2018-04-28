@@ -61,9 +61,6 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot 
      call abend()
   endif
 
-!#ifdef _MOLCAS_MPP_
-!if ( MPP().AND.KING() ) then
-!#endif
   CALL h5open_f( hdferr )
   If (doG3.EQV..true.) Then
     CALL h5fopen_f( file_3rdm, H5F_ACC_RDONLY_F, file_h5, hdferr )
@@ -80,10 +77,6 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot 
   CALL h5sclose_f( space_h5, hdferr )
   CALL h5gclose_f( group_h5, hdferr )
   CALL h5fclose_f( file_h5,  hdferr )
-!#ifdef _MOLCAS_MPP_
-!end if
-!call MPI_Bcast( buffer, NAC * NAC * NAC * NAC * NAC * NAC, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, IERROR4 )
-!#endif
 
   do iG3=1,NG3
     ip1 = idxG3( 1, iG3 ) - 1

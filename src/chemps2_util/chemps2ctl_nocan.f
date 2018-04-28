@@ -417,18 +417,14 @@
           imp1="ln -sf ../molcas_2rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 529', iErr
           imp1="ln -sf ../molcas_3rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 533', iErr
           imp1="ln -sf ../molcas_f4rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 537', iErr
         enddo
         call systemf("ln -sf ../chemps2.log .",iErr)
-!        write(6,*) 'CHEMPS2> DB: 541', iErr
       end if
 #endif
 

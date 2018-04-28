@@ -52,11 +52,6 @@ subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
      call abend()
   endif
 
-
-!#ifdef _MOLCAS_MPP_
-!  if ( MPP().AND.KING() ) then
-!#endif
-
   CALL h5open_f( hdferr )
   CALL h5fopen_f( file_2rdm, H5F_ACC_RDONLY_F, file_h5, hdferr )
   CALL h5gopen_f( file_h5, "2-RDM", group_h5, hdferr )
@@ -68,11 +63,6 @@ subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
   CALL h5sclose_f( space_h5, hdferr )
   CALL h5gclose_f( group_h5, hdferr )
   CALL h5fclose_f( file_h5,  hdferr )
-!#ifdef _MOLCAS_MPP_
-!  end if
-!  call MPI_Bcast( two_rdm, NAC * NAC * NAC * NAC, MPI_DOUBLE_PRECISION, 0,     MPI_COMM_WORLD, IERROR4 )
-!#endif
-
 
   do i=1,NAC
      do j=1,NAC

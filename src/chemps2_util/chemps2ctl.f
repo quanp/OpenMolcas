@@ -128,8 +128,6 @@
         if (chemps2_lrestart.EQ.1.) then
            call f_inquire('CHEMCANFIE',fiedler)
            call f_inquire('CHEMCANMPS0',mps0)
-!           INQUIRE(FILE='molcas_canorb_fiedler.txt', EXIST=fiedler)
-!           INQUIRE(FILE='CheMPS2_canorb_MPS0.h5', EXIST=mps0)
            if (fiedler .and. mps0) then
              write(6,*) 'CHEMPS2> Found checkpoint files for n-RDM'
            else
@@ -409,8 +407,6 @@
            endif
          endif
 
-
-
 ! Quan: save CANORB before actually calculating
          if (
      &   (IFINAL.EQ.2 .AND. Do3RDM
@@ -476,18 +472,14 @@
           imp1="ln -sf ../molcas_2rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 529', iErr
           imp1="ln -sf ../molcas_3rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 533', iErr
           imp1="ln -sf ../molcas_f4rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 537', iErr
         enddo
         call systemf("ln -sf ../chemps2.log .",iErr)
-!        write(6,*) 'CHEMPS2> DB: 541', iErr
       end if
 #endif
 
