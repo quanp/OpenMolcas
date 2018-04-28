@@ -10,10 +10,9 @@
 !                                                                      *
 ! Copyright (C) 2016, Sebastian Wouters                                *
 !***********************************************************************
-! Subroutine to write FCIDUMP for DICE file
+! Subroutine to write FCIDUMP file
 ! Written by Sebastian Wouters, Leuven, Aug 2016
-! Stolen by Quan Phung, Leuven, July 2017
-SUBROUTINE FCIDUMP_DICE( NACT, NELEC, TWOMS, ISYM, ORBSYM, ECONST, OEI, TEI, LINSIZE, NUM_TEI )
+SUBROUTINE FCIDUMP_OUTPUT( NACT, NELEC, TWOMS, ISYM, ORBSYM, ECONST, OEI, TEI, LINSIZE, NUM_TEI )
 
   IMPLICIT NONE
   INTEGER, INTENT(IN) :: NACT, NELEC, TWOMS, ISYM
@@ -69,4 +68,4 @@ SUBROUTINE FCIDUMP_DICE( NACT, NELEC, TWOMS, ISYM, ORBSYM, ECONST, OEI, TEI, LIN
 
   close ( writeout )
 
-END SUBROUTINE FCIDUMP_DICE
+END SUBROUTINE FCIDUMP_OUTPUT

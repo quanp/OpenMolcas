@@ -66,7 +66,7 @@
       Call Get_iScalar('Rotational Symmetry Number',iSigma)
 
 * Get character table to convert MOLPRO symmetry format
-      Call MOLPRO_ChTab_BIS(nSym,Label,iChMolpro)
+      Call MOLPRO_ChTab(nSym,Label,iChMolpro)
 
 * Convert orbital symmetry into MOLPRO format
       Call Getmem('OrbSym','Allo','Inte',lOrbSym,NAC)
@@ -135,7 +135,7 @@
 
       LUCHEMIN=isFreeUnit(29)
       call molcas_open(LUCHEMIN,'chemps2.input')
-      write(LUCHEMIN,*) 'FCIDUMP = FCIDUMP_CHEMPS2'
+      write(LUCHEMIN,*) 'FCIDUMP = FCIDUMP'
 
       call group_psi4number(Label,Labelpsi4)
       write(LUCHEMIN,'(1X,A8,I1)') 'GROUP = ', Labelpsi4

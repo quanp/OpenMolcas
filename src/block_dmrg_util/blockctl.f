@@ -180,7 +180,7 @@
 
       LINSIZE = ( NAC * ( NAC + 1 ) ) / 2
       NUM_TEI = ( LINSIZE * ( LINSIZE + 1 ) ) / 2
-      Call FCIDUMP_BLOCK( NAC, NACTEL, ISPIN-1,
+      Call FCIDUMP_OUTPUT( NAC, NACTEL, ISPIN-1,
      &                     lSymMolpro, iWork(lOrbSym),
      &                     0.0d0, LW1, TUVX,
      &                     LINSIZE, NUM_TEI )

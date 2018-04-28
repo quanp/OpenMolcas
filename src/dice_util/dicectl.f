@@ -60,7 +60,7 @@
       Call Get_iScalar('Rotational Symmetry Number',iSigma)
 
 * Get character table to convert MOLPRO symmetry format
-      Call MOLPRO_ChTab_BIS(nSym,Label,iChMolpro)
+      Call MOLPRO_ChTab(nSym,Label,iChMolpro)
 
 * Convert orbital symmetry into MOLPRO format
       Call Getmem('OrbSym','Allo','Inte',lOrbSym,NAC)
@@ -83,7 +83,7 @@
 
       LINSIZE = ( NAC * ( NAC + 1 ) ) / 2
       NUM_TEI = ( LINSIZE * ( LINSIZE + 1 ) ) / 2
-      Call FCIDUMP_DICE( NAC, NACTEL, ISPIN-1,
+      Call FCIDUMP_OUTPUT( NAC, NACTEL, ISPIN-1,
      &                     lSymMolpro, iWork(lOrbSym),
      &                     0.0d0, LW1, TUVX,
      &                     LINSIZE, NUM_TEI )

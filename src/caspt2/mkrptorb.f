@@ -301,7 +301,7 @@ C Finally, loop again over symmetries, transforming the CI:
             NXMAT=NASHT**2
             CALL GETMEM('XMAT','ALLO','REAL',LXMAT,NXMAT)
             CALL DCOPY_(NXMAT,0.0D0,0,WORK(LXMAT),1)
-            CALL MKXMAT_BIS(TORB,WORK(LXMAT))
+            CALL MKXMAT(TORB,WORK(LXMAT))
 
             CALL chemps2_tran2pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE))
             CALL chemps2_tran3pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE),
