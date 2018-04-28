@@ -22,10 +22,13 @@ subroutine dice_load2pdm( NAC, PT, CHEMROOT )
   CHARACTER(LEN=30) :: file_2rdm
 
   INTEGER :: i, idx1, idx2, idx3, idx4, irdm, lu, ierr
-  INTEGER :: nact
+  INTEGER :: nact, isFreeUnit
   character(len=10) :: rootindex
 
-  PT = 0.0d0
+  external isFreeUnit
+
+  call dcopy_(nac**4,0.0d0,0,PT,1)
+!  PT = 0.0d0
 
   write(rootindex,"(I2)") chemroot-1
   file_2rdm="spatialRDM."//trim(adjustl(rootindex))//"."//trim(adjustl(rootindex))//".txt"
@@ -37,7 +40,7 @@ subroutine dice_load2pdm( NAC, PT, CHEMROOT )
      call abend()
   endif
 
-  LU=40
+  LU=isFreeUnit(40)
   call molcas_open(LU,file_2rdm)
 
   read(LU,*) nact

@@ -28,10 +28,12 @@ REAL(8), INTENT(IN) :: lxmat(nact*nact)
 REAL*8, DIMENSION( 1 : nact*nact*nact*nact ) :: twordm
 
 integer :: i, j, k, l, iter, ind, LU
-integer :: p
+integer :: p, isFreeUnit
 real(8), allocatable :: outrdm(:)
 real(8), allocatable :: tmprdm(:), tmprdm2(:)
 character(len=10) :: rootindex
+
+external isFreeUnit
 
 nact2 = nact  * nact
 nact3 = nact2 * nact
@@ -85,7 +87,7 @@ write(rootindex,"(I2)") chemroot-1
 file_2rdm="./node0/spatial_twopdm."//trim(adjustl(rootindex))//"."//trim(adjustl(rootindex))//".txt.trans"
 file_2rdm=trim(adjustl(file_2rdm))
 
-LU=41
+LU=isFreeUnit(41)
 call molcas_open(LU,file_2rdm)
 
 write(LU,*) nact

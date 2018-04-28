@@ -23,8 +23,10 @@ subroutine block_load3pdm_txt( NAC, PT, CHEMROOT, TRANS )
   CHARACTER(LEN=50) :: file_3rdm
 
   INTEGER :: idx1, idx2, idx3, idx4, idx5, idx6, irdm, lu, ierr
-  INTEGER :: nact
+  INTEGER :: nact, isFreeUnit
   character(len=10) :: rootindex
+
+  external isFreeUnit
 
   call dcopy_(nac**6,0.0d0,0,PT,1)
 !  PT = 0.0d0
@@ -43,7 +45,7 @@ subroutine block_load3pdm_txt( NAC, PT, CHEMROOT, TRANS )
      call abend()
   endif
 
-  LU=40
+  LU=isFreeUnit(40)
   call molcas_open(LU,file_3rdm)
 
   read(LU,*) nact
