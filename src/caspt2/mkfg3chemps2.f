@@ -34,7 +34,7 @@
 
       If(NACTEL.GT.1) Then
         NAC4 = NLEV * NLEV * NLEV * NLEV
-        Call chemps2_load2pdm( nlev, G2, MSTATE(JSTATE) )
+        Call chemps2_load2pdm( nlev, G2, MSTATE(JSTATE), DoTranRDM )
         Call two2onerdm( nlev, NACTEL, G2, G1 )
       Else
         write(6,*) "FATAL ERROR: DMRG-CASPT2 with
@@ -58,9 +58,9 @@
       If(NACTEL.GE.3) THEN
 
         call chemps2_load3pdm( nlev, idxG3, NG3, F3, .false., EPSA,
-     &                         F2, MSTATE(JSTATE) )
+     &                         F2, MSTATE(JSTATE), DoTranRDM )
         call chemps2_load3pdm( nlev, idxG3, NG3, G3, .true. , EPSA,
-     &                         F2, MSTATE(JSTATE) )
+     &                         F2, MSTATE(JSTATE), DoTranRDM )
 
       End If
 

@@ -14,7 +14,7 @@
 ! Subroutine to load 2RDM
 ! Written by Quan Phung and Sebastian Wouters, Leuven, Aug 2016
 
-subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
+subroutine chemps2_load2pdm( NAC, PT, CHEMROOT, TRANS )
 
   USE HDF5
   USE ISO_C_BINDING
@@ -25,6 +25,7 @@ subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
   IMPLICIT NONE
   INTEGER, INTENT(IN) :: NAC, CHEMROOT
   REAL*8, INTENT(OUT) :: PT( NAC, NAC, NAC, NAC )
+  LOGICAL, INTENT(IN) :: TRANS
 
   CHARACTER(LEN=30) :: file_2rdm
 
@@ -44,7 +45,13 @@ subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
   REAL*8, DIMENSION( 1 : NAC * NAC * NAC * NAC ), TARGET :: two_rdm
 
   write(rootindex,"(I2)") chemroot-1
-  file_2rdm="molcas_2rdm.h5.r"//trim(adjustl(rootindex))
+
+  if (trans) then
+    file_2rdm="molcas_2rdm.h5.r"//trim(adjustl(rootindex))//".tran"
+  else
+    file_2rdm="molcas_2rdm.h5.r"//trim(adjustl(rootindex))
+  endif
+
   file_2rdm=trim(adjustl(file_2rdm))
   call f_inquire(file_2rdm, irdm)
   if (.NOT. irdm) then

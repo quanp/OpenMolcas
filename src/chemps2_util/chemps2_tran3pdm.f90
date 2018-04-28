@@ -140,7 +140,7 @@ DO ITER=1,6
 ENDDO
 
 
-! Creat a tran file and overwrite the old rdm
+! Create a tran file and overwrite the old rdm
 
 file_3rdm_tran  =  "molcas_3rdm.h5.r"//trim(adjustl(rootindex))//".tran"
 file_f4rdm_tran = "molcas_f4rdm.h5.r"//trim(adjustl(rootindex))//".tran"
@@ -179,19 +179,19 @@ CALL h5sclose_f( space_h5, hdferr )
 CALL h5gclose_f( group_h5, hdferr )
 CALL h5fclose_f( file_h5,  hdferr )
 
-if (tran3rdm) then
+!if (tran3rdm) then
 ! If files are too large, fcopy fails
 !  call fcopy( file_3rdm_tran, file_3rdm,iErr)
-  imp = "cp " // file_3rdm_tran // " " // file_3rdm
-  imp = trim(adjustl(imp))
-  call system(imp)
-else
+!  imp = "cp " // file_3rdm_tran // " " // file_3rdm
+!  imp = trim(adjustl(imp))
+!  call system(imp)
+!else
 ! If files are too large, fcopy fails
 !  call fcopy(file_f4rdm_tran,file_f4rdm,iErr)
-  imp = "cp " // file_f4rdm_tran // " " // file_f4rdm
-  imp = trim(adjustl(imp))
-  call system(imp)
-endif
+!  imp = "cp " // file_f4rdm_tran // " " // file_f4rdm
+!  imp = trim(adjustl(imp))
+!  call system(imp)
+!endif
 
 deallocate(outrdm )
 deallocate(tmprdm )

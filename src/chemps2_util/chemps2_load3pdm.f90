@@ -14,7 +14,7 @@
 ! Subroutine to load 3-RDM and F4-RDM
 ! Written by Quan Phung and Sebastian Wouters, Leuven, Aug 2016
 
-subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot )
+subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot, trans )
 
   USE HDF5
   USE ISO_C_BINDING
@@ -29,6 +29,7 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot 
   LOGICAL, INTENT(IN)   :: doG3
   REAL*8, INTENT(IN)    :: EPSA( NAC )
   REAL*8, INTENT(OUT)   :: F2 ( NAC, NAC, NAC, NAC )
+  LOGICAL, INTENT(IN)   :: trans
 
   CHARACTER(LEN=30) :: file_3rdm
   CHARACTER(LEN=30) :: file_f4rdm
@@ -50,8 +51,15 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot 
   REAL*8, DIMENSION( 1 : NAC * NAC * NAC * NAC * NAC * NAC ), TARGET :: buffer
 
   write(rootindex,"(I2)") chemroot-1
-  file_3rdm="molcas_3rdm.h5.r"//trim(adjustl(rootindex))
-  file_f4rdm="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))
+
+  if (trans) then
+    file_3rdm="molcas_3rdm.h5.r"//trim(adjustl(rootindex))//".tran"
+    file_f4rdm="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))//".tran"
+  else
+    file_3rdm="molcas_3rdm.h5.r"//trim(adjustl(rootindex))
+    file_f4rdm="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))
+  endif
+
   file_3rdm=trim(adjustl(file_3rdm))
   file_f4rdm=trim(adjustl(file_f4rdm))
   call f_inquire(file_3rdm, irdm)

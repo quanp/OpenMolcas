@@ -72,7 +72,14 @@ C DENSITY MATRICES FOR A CASSCF WAVE FUNCTION.
 #ifdef _ENABLE_CHEMPS2_DMRG_
           if (DoExactRDM) then
           NAC4 = NLEV * NLEV * NLEV * NLEV
-          CALL chemps2_load2pdm( NASHT, WORK( LG2TMP ), MSTATE(JSTATE) )
+          CALL chemps2_load2pdm( NASHT, WORK( LG2TMP ),
+     &                         MSTATE(JSTATE), doPoly2 )
+          if (DoTranRDM) then
+            doPoly2 = .TRUE.
+          else
+            doPoly2 = .FALSE.
+          endif
+
           CALL TWO2ONERDM(NASHT,NACTEL,WORK(LG2TMP),WORK(LG1TMP))
           IF(iPrGlb.GE.DEBUG) THEN
             WRITE(6,'("DEBUG> ",A)')
