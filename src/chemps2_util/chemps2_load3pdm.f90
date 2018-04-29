@@ -34,6 +34,7 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
   CHARACTER(LEN=30) :: file_3rdm
   CHARACTER(LEN=30) :: file_f4rdm
   LOGICAL           :: irdm, jrdm
+  CHARACTER(LEN=50) :: imp
 
   INTEGER( HID_T )   :: file_h5, group_h5, space_h5, dset_h5 ! Handles
   INTEGER(4)         :: hdferr
@@ -46,7 +47,7 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
   Logical Is_Real_Par
 #endif
 
-  INTEGER :: ip1, ip2, ip3, iq1, iq2, iq3, idx, iG3
+  INTEGER :: ip1, ip2, ip3, iq1, iq2, iq3, idx, iG3, ierr
 
   REAL*8, DIMENSION( 1 : NAC * NAC * NAC * NAC * NAC * NAC ), TARGET :: buffer
 
@@ -65,8 +66,21 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
   call f_inquire(file_3rdm, irdm)
   call f_inquire(file_f4rdm, jrdm)
   if ((.NOT. irdm) .OR. (.NOT. jrdm)) then
-     write(6,'(1X,A15,I3,A26)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
-     call abend()
+#ifdef _MOLCAS_MPP_
+     if ( KING() ) then
+       write(6,'(1X,A15,I3,A16)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
+       call abend()
+     endif
+#endif
+     imp="ln -sf ../" // file_3rdm // " ."
+     imp=trim(adjustl(imp))
+     call systemf(imp,iErr)
+     write(6,'(1X,A46)') 'CHEMPS2> Automatically symbolic link 3RDM file'
+
+     imp="ln -sf ../" // file_f4rdm // " ."
+     imp=trim(adjustl(imp))
+     call systemf(imp,iErr)
+     write(6,'(1X,A46)') 'CHEMPS2> Automatically symbolic link F4RDM file'
   endif
 
   CALL h5open_f( hdferr )

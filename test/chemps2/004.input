@@ -48,6 +48,8 @@ Medium
 &SCF
  Charge = -1
 
+>> COPY startorb INPORB
+
 &RASSCF
 LumOrb
 Spin
@@ -67,13 +69,15 @@ DMRG = 1000
 3RDM
 CHNOcanonical
 HFOC = 2 0 2 0
-FILEOrb = startorb
+LUMORB
 
 &CASPT2
  CheMPS2
  MULT = 1 1
  NOMUL
  CHTRansform
+
+>> COPY startorb INPORB
 
 &RASSCF
 LumOrb
@@ -94,7 +98,7 @@ DMRG = 1000
 3RDM
 CHNOcanonical
 HFOC = 2 0 2 0
-FILEOrb = startorb
+LUMORB
 
 &CASPT2
  CheMPS2

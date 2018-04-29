@@ -48,6 +48,8 @@ Medium
 &SCF
  Charge = -1
 
+>> COPY startorb INPORB
+
 &RASSCF
 LumOrb
 Spin
@@ -61,10 +63,12 @@ Inactive
 Ras2
 0 0 2 2
 CIROOT = 1 1 ; 1
-FILEOrb = startorb
+LUMORB
 
 &CASPT2
  MULT = 1 1
+
+>> COPY startorb INPORB
 
 &RASSCF
 LumOrb
@@ -82,7 +86,7 @@ CIROOT = 1 1 ; 1
 CISOlver = CHEMPS2
 DMRG = 1000
 3RDM
-FILEOrb = startorb
+LUMORB
 
 &CASPT2
  CheMPS2
