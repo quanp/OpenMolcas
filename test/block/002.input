@@ -30,6 +30,8 @@ Medium
 &SCF
  Charge = -1
 
+>> COPY startorb INPORB
+
 &RASSCF
 LumOrb
 Spin
@@ -43,10 +45,12 @@ Inactive
 Ras2
 0 0 2 2
 CIROOT = 1 2 ; 2
-FILEOrb = startorb
+LUMORB
 
 &CASPT2
  MULT = 1 2
+
+>> COPY startorb INPORB
 
 &RASSCF
 LumOrb
@@ -65,7 +69,7 @@ CISOlver = BLOCK
 DMRG = 1000
 3RDM
 HFOC = 2 0 2 0
-FILEOrb = startorb
+LUMORB
 
 &CASPT2
  MULT = 1 2
@@ -281,8 +285,8 @@ FILEOrb = startorb
 #> MLTPL__2[4]="0.0"/3
 #> MLTPL__2[5]="1.854401861592"/3
 #>>   5
-#> E_CASPT2="-192.031292365376"/7
-#> E_MSPT2="-192.031292365376"/7
+#> E_CASPT2="-192.031292365376"/6
+#> E_MSPT2="-192.031292365376"/6
 #>>   6
 #> RASSCF_ITER="14"/8
 #> E_RASSCF="-192.101510735578"/6
@@ -307,6 +311,6 @@ FILEOrb = startorb
 #> MLTPL__2[4]="0.0"/3
 #> MLTPL__2[5]="1.854397539179"/3
 #>>   7
-#> E_CASPT2="-192.031261819995"/7
-#> E_MSPT2="-192.031261819995"/7
+#> E_CASPT2="-192.031261819995"/6
+#> E_MSPT2="-192.031261819995"/6
 >>EOF
