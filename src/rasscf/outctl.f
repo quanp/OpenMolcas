@@ -169,7 +169,7 @@ C Local print level (if any)
       Write(LF,*)
 
 #ifdef _DICE_
-      if(.Not.DoDice) GoTo 113
+      if(.Not.DoDice) GoTo 115
       Line=' '
       Write(Line(left-2:),'(A)') 'DICE specifications:'
       Call CollapseOutput(1,Line)
@@ -191,7 +191,7 @@ C Local print level (if any)
 *     Skip printing CI specifications in DICE
       GoTo 114
 
- 113  Continue
+ 115  Continue
 #endif
 
 #if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_

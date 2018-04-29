@@ -240,7 +240,7 @@ C.. for GAS
       Write(LF,*)
 
 #ifdef _DICE_
-      if(.Not.DoDice) GoTo 113
+      if(.Not.DoDice) GoTo 115
       Line=' '
       Write(LF,Fmt2//'A,T45)') 'Please cite the following papers'
       Write(LF,Fmt2//'A,T80)') '(https://sanshar.github.io/
@@ -272,7 +272,7 @@ C.. for GAS
 *     Skip printing CI specifications in DICE
       GoTo 114
 
- 113  Continue
+ 115  Continue
 #endif
 
 

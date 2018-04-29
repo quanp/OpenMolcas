@@ -188,8 +188,10 @@ C Local print level (if any)
 #endif
 
 #ifdef _DICE_
+                if (doDice) then
                  CALL dice_densi_rasscf(IPCMRoot,Work(LW6),Work(LW7),
      &                                 Work(LW8),Work(LW9),Work(LW10))
+                endif
 #endif
 
 * NN.14 NOTE: IFCAS must be 0 for DMRG-CASSCF
@@ -291,7 +293,9 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
 #endif
 
 #ifdef _DICE_
-          Call DiceCtl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
+          if (doDice) then
+            Call DiceCtl(Work(LW1),Work(ipTmpTUVX),IFINAL,IRst)
+          endif
 #endif
 
           Call GetMem('TmpTUVX','Free','Real',ipTmpTUVX,NACPR2)
@@ -314,7 +318,9 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
 #endif
 
 #ifdef _DICE_
-          Call DiceCtl(Work(LW1),TUVX,IFINAL,IRst)
+          if (doDice) then
+            Call DiceCtl(Work(LW1),TUVX,IFINAL,IRst)
+          endif
 #endif
         End If
       endif
@@ -367,8 +373,10 @@ C     kh0_pointer is used in Lucia to retrieve H0 from Molcas.
 #endif
 
 #ifdef _DICE_
+          if (doDice) then
           CALL dice_densi_rasscf(jRoot,Work(LW6),Work(LW7),
      &                            Work(LW8),Work(LW9),Work(LW10))
+          endif
 #endif
           CALL GETMEM('PTscr','FREE','REAL',LW10,NACT4)
         EndIf
