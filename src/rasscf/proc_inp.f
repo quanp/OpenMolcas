@@ -141,6 +141,7 @@ C   No changing about read in orbital information from INPORB yet.
 * NN.14 Block DMRG flag
       DoBlockDMRG = .false.
       DoCheMPS2   = .false.
+      doDice      = .false.
       two2one     = 3
       blockrestart = .false.
 #ifdef _ENABLE_CHEMPS2_DMRG_
@@ -164,7 +165,6 @@ C   No changing about read in orbital information from INPORB yet.
 
 ! Quan.17: Dice default flags
 #ifdef _DICE_
-      doDice = .false.
       Dice_stoc = .false.
       nref_dice = 1
       dice_eps1 = 1.0d-5

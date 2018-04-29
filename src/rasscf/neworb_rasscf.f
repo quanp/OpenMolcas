@@ -201,12 +201,12 @@ cc YM:   The lRF flag can be removed if "TRACI" utility has MPS version
 cc        If(.not.lRF.OR.iOrbTyp.EQ.2) Then
 c YM:   Just use the same way as Block did, the NOs will be added later
         If(.not.doDMRG.OR.iOrbTyp.EQ.2) Then
-#elif defined _DICE_
-        If(.not.doDice.OR.iOrbTyp.EQ.2) Then
+!#elif defined _DICE_
+!        If(.not.doDice.OR.iOrbTyp.EQ.2) Then
 #else
 C NN.14 Skip making new orbitals for DMRG-CASSCF except for the case OutOrb = Canonical
 C       because the DMRG is orbital variant.
-        If((.NOT.DoBlockDMRG .AND. .NOT.DoCheMPS2) .OR.
+        If((.NOT.DoBlockDMRG .AND. .NOT.DoCheMPS2 .AND. .NOT.doDice).OR.
      &      iOrbTyp.EQ.2) Then
 #endif
 
