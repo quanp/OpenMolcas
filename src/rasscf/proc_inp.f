@@ -2736,13 +2736,13 @@ c       write(6,*)          '  --------------------------------------'
        Call ChkIfKey()
       End If
 *
-*---  Process T2O command --------------------------------------------*
-      If (KeyT2O) Then
-       Call SetPos(LUInput,'T2O ',Line,iRc)
+*---  Process T2ON command --------------------------------------------*
+      If (KeyT2ON) Then
+       Call SetPos(LUInput,'T2ON',Line,iRc)
        If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
-       ReadStatus=' Failure reading data after MXSW keyword.'
+       ReadStatus=' Failure reading data after T2ON keyword.'
        Read(LUInput,*,End=9910,Err=9920) two2one
-       ReadStatus=' O.K. after reading data after MXSW keyword.'
+       ReadStatus=' O.K. after reading data after T2ON keyword.'
        Call ChkIfKey()
       End If
 *---  Process 3RDM command --------------------------------------------*
@@ -2882,18 +2882,18 @@ c       write(6,*)          '  --------------------------------------'
        Call SetPos(LUInput,'STOC',Line,iRc)
        Call ChkIfKey()
       End If
-*---  Process HFOC command --------------------------------------------*
+*---  Process DIOC command --------------------------------------------*
       DICEOCC = ''
-      If (KeyHFOC) Then
-       Call SetPos(LUInput,'HFOC',Line,iRc)
+      If (KeyDIOC) Then
+       Call SetPos(LUInput,'DIOC',Line,iRc)
        If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
-       ReadStatus=' Failure reading data after HFOC keyword.'
+       ReadStatus=' Failure reading data after DIOC keyword.'
        Read(LUInput,*,End=9910,Err=9920) nref_dice
        do iref_dice=1,nref_dice
           Read(LUInput,'(A)',End=9910,Err=9920) diceocc(iref_dice)
           call molcas2dice(diceocc(iref_dice))
        enddo
-       ReadStatus=' O.K. after reading data after HFOC keyword.'
+       ReadStatus=' O.K. after reading data after DIOC keyword.'
        Call ChkIfKey()
       End If
 *---  Process EPSI command --------------------------------------------*

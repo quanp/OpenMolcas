@@ -13,7 +13,7 @@
       Integer LuInput
 * Used for input processing
       Integer NKeys
-      Parameter (NKeys=125)
+      Parameter (NKeys=126)
 *------------------------------------------------------
 * Logical flags, to check whether a keyword has been used
 * in the input:
@@ -43,8 +43,8 @@
      &     keyDAVT, keyCHRE, keyCHBL, keyMXSW, keyNOIS,
      &     keyDMRE, keyMXCA, keyDEXS, keyHROO, KeyTDM,
      &     keyCHNO, keyDICE, keySTOC, keyEPSI, keySAMP,
-     &     keyDITE, keyDIRE, keyCISO, keyT2O , keyBLRE,
-     &     KeyZZZZ
+     &     keyDITE, keyDIRE, keyCISO, keyT2ON, keyBLRE,
+     &     keyDIOC, KeyZZZZ
 
       Common /InputFlags/ KeyAAAA,
      &     KeyALTE, KeyATOM, KeyAVER, KeyCHAR, KeyCHOI,
@@ -71,8 +71,8 @@
      &     keyDAVT, keyCHRE, keyCHBL, keyMXSW, keyNOIS,
      &     keyDMRE, keyMXCA, keyDEXS, keyHROO, KeyTDM,
      &     keyCHNO, keyDICE, keySTOC, keyEPSI, keySAMP,
-     &     keyDITE, keyDIRE, keyCISO, keyT2O , keyBLRE,
-     &     KeyZZZZ
+     &     keyDITE, keyDIRE, keyCISO, keyT2ON, keyBLRE,
+     &     keyDIOC, KeyZZZZ
 
       Equivalence(KeyAAAA,KeyFlags(0))
 *------------------------------------------------------
@@ -102,7 +102,8 @@
      &           'DAVT','CHRE','CHBL','MXSW','NOIS',
      &           'DMRE','MXCA','DEXS','HROO','TDM ',
      &           'CHNO','DICE','STOC','EPSI','SAMP',
-     &           'DITE','DIRE','CISO','T2O ','BLRE'/
+     &           'DITE','DIRE','CISO','T2ON','BLRE',
+     &           'DIOC'/
 *------------------------------------------------------
 * Input data sets:
       Integer iCI_I,IROOT_I,NFRO_I,NISH_I,NRS1_I,NRS2_I,NRS3_I,NDEL_I,
