@@ -80,7 +80,7 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
      imp="ln -sf ../" // file_f4rdm // " ."
      imp=trim(adjustl(imp))
      call systemf(imp,iErr)
-     write(6,'(1X,A46)') 'CHEMPS2> Automatically symbolic link F4RDM file'
+     write(6,'(1X,A47)') 'CHEMPS2> Automatically symbolic link F4RDM file'
   endif
 
   CALL h5open_f( hdferr )

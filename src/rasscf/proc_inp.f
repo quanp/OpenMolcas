@@ -2700,6 +2700,7 @@ c       write(6,*)          '  --------------------------------------'
        If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
        ReadStatus=' Failure reading data after CISO keyword.'
        cisolver=Get_Ln(LUInput)
+       call upcase(cisolver)
        Call ChkIfKey()
       End If
 

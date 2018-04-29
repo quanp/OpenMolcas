@@ -95,7 +95,7 @@ do i=1,nact
   do j=1,nact
     do k=1,nact
       do l=1,nact
-        write(LU,'(4I3,E20.12)') i-1, j-1, k-1, l-1, twordm( (i-1)*nact**3 + (l-1)*nact**2 + (j-1)*nact + k )/2.0d0
+        write(LU,'(4I3,E20.12)') i-1, j-1, k-1, l-1, twordm( (i-1)*nact3 + (l-1)*nact2 + (j-1)*nact + k )/2.0d0
       enddo
     enddo
   enddo

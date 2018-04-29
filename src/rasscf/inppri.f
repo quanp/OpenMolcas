@@ -285,6 +285,15 @@ C.. for GAS
       Call CollapseOutput(1,Line)
       Write(LF,Fmt1)'--------------------------'
       Write(LF,*)
+      if (DoBlockDMRG) then
+#ifdef _NEW_BLOCK_
+        Write(LF,Fmt2//'A,T45,T10)') 'CI Solver', 'BLOCK v1.5'
+#else
+        Write(LF,Fmt2//'A,T45,T10)') 'CI Solver', 'BLOCK v1.1'
+#endif
+      elseif (DoCheMPS2) then
+        Write(LF,Fmt2//'A,T45,T7)') 'CI Solver', 'CHEMPS2'
+      endif
       Write(LF,Fmt2//'A,T45,I6)')'Number of renormalized basis',
      &                           MxDMRG
       Write(LF,Fmt2//'A,T45,I6)')'Number of root(s) required',
