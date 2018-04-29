@@ -16,7 +16,7 @@ therefore not included in OpenMolcas.
 
 Note
 ------------
-This copy of OpenMolcas has different novel CI Solvers for CASSCF, including 
+This copy of OpenMolcas has different novel CI Solvers for CASSCF, including
 Block (G. K-.L. Chan), CheMPS2 (S. Wouters), and Dice (S. Sharma).
 
 Check wiki for installation and manual.

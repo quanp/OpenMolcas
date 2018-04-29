@@ -28,8 +28,7 @@ SUBROUTINE FCIDUMP_OUTPUT( NACT, NELEC, TWOMS, ISYM, ORBSYM, ECONST, OEI, TEI, L
 
 
   writeout=isfreeunit(28)
-!  open ( unit=writeout, file="FCIDUMP_CHEMPS2", action="write", status="replace" )
-  call molcas_open(writeout,"FCIDUMP_CHEMPS2")
+  call molcas_open(writeout,"FCIDUMP")
   write ( writeout, "(A11,I3,A7,I3,A5,I2,A1)" ) " &FCI NORB=", NACT, ",NELEC=", NELEC, ",MS2=", TWOMS, ","
   write ( writeout, "(A9)", ADVANCE = "NO" ) "  ORBSYM="
   do i=1,NACT

@@ -110,6 +110,8 @@
         END IF
 
 * POLY2: Computing 1- and 2-particle active density matrices GAMMA1 and GAMMA2
+!Quan: fix bug DMRG
+        doPoly2 = .FALSE.
         CALL POLY2(WORK(LCI))
 * GETDPREF: Restructure GAMMA1 and GAMMA2, as DREF and PREF arrays.
         CALL GETDPREF(WORK(LDREF),WORK(LPREF))

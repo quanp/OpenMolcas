@@ -14,7 +14,7 @@
 ! Subroutine to load 3-RDM and F4-RDM
 ! Written by Quan Phung and Sebastian Wouters, Leuven, Aug 2016
 
-subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot )
+subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot, trans )
 
   USE HDF5
   USE ISO_C_BINDING
@@ -29,10 +29,12 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot 
   LOGICAL, INTENT(IN)   :: doG3
   REAL*8, INTENT(IN)    :: EPSA( NAC )
   REAL*8, INTENT(OUT)   :: F2 ( NAC, NAC, NAC, NAC )
+  LOGICAL, INTENT(IN)   :: trans
 
   CHARACTER(LEN=30) :: file_3rdm
   CHARACTER(LEN=30) :: file_f4rdm
   LOGICAL           :: irdm, jrdm
+  CHARACTER(LEN=50) :: imp
 
   INTEGER( HID_T )   :: file_h5, group_h5, space_h5, dset_h5 ! Handles
   INTEGER(4)         :: hdferr
@@ -45,25 +47,42 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot 
   Logical Is_Real_Par
 #endif
 
-  INTEGER :: ip1, ip2, ip3, iq1, iq2, iq3, idx, iG3
+  INTEGER :: ip1, ip2, ip3, iq1, iq2, iq3, idx, iG3, ierr
 
   REAL*8, DIMENSION( 1 : NAC * NAC * NAC * NAC * NAC * NAC ), TARGET :: buffer
 
   write(rootindex,"(I2)") chemroot-1
-  file_3rdm="molcas_3rdm.h5.r"//trim(adjustl(rootindex))
-  file_f4rdm="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))
+
+  if (trans) then
+    file_3rdm="molcas_3rdm.h5.r"//trim(adjustl(rootindex))//".tran"
+    file_f4rdm="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))//".tran"
+  else
+    file_3rdm="molcas_3rdm.h5.r"//trim(adjustl(rootindex))
+    file_f4rdm="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))
+  endif
+
   file_3rdm=trim(adjustl(file_3rdm))
   file_f4rdm=trim(adjustl(file_f4rdm))
   call f_inquire(file_3rdm, irdm)
   call f_inquire(file_f4rdm, jrdm)
   if ((.NOT. irdm) .OR. (.NOT. jrdm)) then
-     write(6,'(1X,A15,I3,A26)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
-     call abend()
+#ifdef _MOLCAS_MPP_
+     if ( KING() ) then
+       write(6,'(1X,A15,I3,A16)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
+       call abend()
+     endif
+#endif
+     imp="ln -sf ../" // file_3rdm // " ."
+     imp=trim(adjustl(imp))
+     call systemf(imp,iErr)
+     write(6,'(1X,A46)') 'CHEMPS2> Automatically symbolic link 3RDM file'
+
+     imp="ln -sf ../" // file_f4rdm // " ."
+     imp=trim(adjustl(imp))
+     call systemf(imp,iErr)
+     write(6,'(1X,A47)') 'CHEMPS2> Automatically symbolic link F4RDM file'
   endif
 
-!#ifdef _MOLCAS_MPP_
-!if ( MPP().AND.KING() ) then
-!#endif
   CALL h5open_f( hdferr )
   If (doG3.EQV..true.) Then
     CALL h5fopen_f( file_3rdm, H5F_ACC_RDONLY_F, file_h5, hdferr )
@@ -80,10 +99,6 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot 
   CALL h5sclose_f( space_h5, hdferr )
   CALL h5gclose_f( group_h5, hdferr )
   CALL h5fclose_f( file_h5,  hdferr )
-!#ifdef _MOLCAS_MPP_
-!end if
-!call MPI_Bcast( buffer, NAC * NAC * NAC * NAC * NAC * NAC, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, IERROR4 )
-!#endif
 
   do iG3=1,NG3
     ip1 = idxG3( 1, iG3 ) - 1

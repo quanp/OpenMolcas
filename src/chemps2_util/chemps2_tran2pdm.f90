@@ -117,7 +117,7 @@ DO ITER=1,4
 
 ENDDO
 
-! Creat a tran file and overwrite the old rdm
+! Create a tran file and overwrite the old rdm
 
 file_2rdm_tran="molcas_2rdm.h5.r"//trim(adjustl(rootindex))//".tran"
 file_2rdm_tran=trim(adjustl(file_2rdm_tran))
@@ -134,7 +134,7 @@ CALL h5sclose_f( space_h5, hdferr )
 CALL h5gclose_f( group_h5, hdferr )
 CALL h5fclose_f( file_h5,  hdferr )
 
-call fcopy(file_2rdm_tran,file_2rdm,iErr)
+!call fcopy(file_2rdm_tran,file_2rdm,iErr)
 
 deallocate(outrdm )
 deallocate(tmprdm )

@@ -56,16 +56,31 @@ C DENSITY MATRICES FOR A CASSCF WAVE FUNCTION.
         ELSE
 #ifdef _ENABLE_BLOCK_DMRG_
           if (DoCumulant) then
-          CALL block_load2pdm(NASHT,WORK(LG2TMP),JSTATE,JSTATE)
-          CALL TWO2ONERDM(NASHT,NACTEL,WORK(LG2TMP),WORK(LG1TMP))
+#ifndef _NEW_BLOCK_
+            CALL block_load2pdm(NASHT,WORK(LG2TMP),
+     &                          MSTATE(JSTATE),MSTATE(JSTATE))
+#elif _NEW_BLOCK_
+            CALL block_load2pdm_txt(NASHT,WORK(LG2TMP),
+     &                              MSTATE(JSTATE),doPoly2)
+            doPoly2 = .TRUE.
+#endif
+            CALL TWO2ONERDM(NASHT,NACTEL,WORK(LG2TMP),WORK(LG1TMP))
           endif
+
 #endif
 
 #ifdef _ENABLE_CHEMPS2_DMRG_
           if (DoExactRDM) then
           NAC4 = NLEV * NLEV * NLEV * NLEV
-          CALL chemps2_load2pdm( NASHT, WORK( LG2TMP ), MSTATE(JSTATE) )
-          CALL TWO2ONERDM_BIS(NASHT,NACTEL,WORK(LG2TMP),WORK(LG1TMP))
+          CALL chemps2_load2pdm( NASHT, WORK( LG2TMP ),
+     &                         MSTATE(JSTATE), doPoly2 )
+          if (DoTranRDM) then
+            doPoly2 = .TRUE.
+          else
+            doPoly2 = .FALSE.
+          endif
+
+          CALL TWO2ONERDM(NASHT,NACTEL,WORK(LG2TMP),WORK(LG1TMP))
           IF(iPrGlb.GE.DEBUG) THEN
             WRITE(6,'("DEBUG> ",A)')
      &        "CHEMPS2: norms of the density matrices:"

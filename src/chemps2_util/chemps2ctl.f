@@ -63,7 +63,7 @@
       Call Get_iScalar('Rotational Symmetry Number',iSigma)
 
 * Get character table to convert MOLPRO symmetry format
-      Call MOLPRO_ChTab_BIS(nSym,Label,iChMolpro)
+      Call MOLPRO_ChTab(nSym,Label,iChMolpro)
 
 * Convert orbital symmetry into MOLPRO format
       Call Getmem('OrbSym','Allo','Inte',lOrbSym,NAC)
@@ -128,8 +128,6 @@
         if (chemps2_lrestart.EQ.1.) then
            call f_inquire('CHEMCANFIE',fiedler)
            call f_inquire('CHEMCANMPS0',mps0)
-!           INQUIRE(FILE='molcas_canorb_fiedler.txt', EXIST=fiedler)
-!           INQUIRE(FILE='CheMPS2_canorb_MPS0.h5', EXIST=mps0)
            if (fiedler .and. mps0) then
              write(6,*) 'CHEMPS2> Found checkpoint files for n-RDM'
            else
@@ -145,7 +143,7 @@
 
       LUCHEMIN=isFreeUnit(29)
       call molcas_open(LUCHEMIN,'chemps2.input')
-      write(LUCHEMIN,*) 'FCIDUMP = FCIDUMP_CHEMPS2'
+      write(LUCHEMIN,*) 'FCIDUMP = FCIDUMP'
 
       call group_psi4number(Label,Labelpsi4)
       write(LUCHEMIN,'(1X,A8,I1)') 'GROUP = ', Labelpsi4
@@ -349,12 +347,15 @@
       write(LUCHEMIN,*) 'MOLCAS_STATE_AVG = TRUE'
       write(LUCHEMIN,*) 'MOLCAS_2RDM    = molcas_2rdm.h5'
 
-      if (sum(hfocc) .NE. 0) then
+      if (sum(hfocc) .EQ. NACTEL) then
+        write(6,*)  'CHEMPS2> Using user-specified ROHF guess'
         write(LUCHEMIN,'(A13)',ADVANCE='NO') 'MOLCAS_OCC ='
         do ihfocc=1,NAC-1
           write(LUCHEMIN,'(I3,A2)', ADVANCE='NO') HFOCC(ihfocc), ', '
         enddo
         write(LUCHEMIN,'(I3)') HFOCC(NAC)
+      else
+        write(6,*)  'CHEMPS2> Using noise guess'
       endif
 
       If (IFINAL.EQ.2 .AND. Do3RDM .AND. NACTEL.GT.2) Then
@@ -405,8 +406,6 @@
              enddo
            endif
          endif
-
-
 
 ! Quan: save CANORB before actually calculating
          if (
@@ -473,18 +472,14 @@
           imp1="ln -sf ../molcas_2rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 529', iErr
           imp1="ln -sf ../molcas_3rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 533', iErr
           imp1="ln -sf ../molcas_f4rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
           call systemf(imp1,iErr)
-!          write(6,*) 'CHEMPS2> DB: 537', iErr
         enddo
         call systemf("ln -sf ../chemps2.log .",iErr)
-!        write(6,*) 'CHEMPS2> DB: 541', iErr
       end if
 #endif
 

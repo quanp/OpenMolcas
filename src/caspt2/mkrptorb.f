@@ -279,8 +279,15 @@ C Finally, loop again over symmetries, transforming the CI:
           CALL DCOPY_(NXMAT,0.0D0,0,WORK(LXMAT),1)
           CALL MKXMAT(TORB,WORK(LXMAT))
 
-          CALL block_tran2pdm(NASHT,WORK(LXMAT),JSTATE,JSTATE)
-          CALL block_tran3pdm(NASHT,WORK(LXMAT),JSTATE,JSTATE)
+#ifndef _NEW_BLOCK_
+          CALL block_tran2pdm(NASHT,WORK(LXMAT),
+     &                        MSTATE(JSTATE),MSTATE(JSTATE))
+          CALL block_tran3pdm(NASHT,WORK(LXMAT),
+     &                        MSTATE(JSTATE),MSTATE(JSTATE))
+#elif _NEW_BLOCK_
+          CALL block_tran2pdm_txt(NASHT,WORK(LXMAT),MSTATE(JSTATE))
+          CALL block_tran3pdm_txt(NASHT,WORK(LXMAT),MSTATE(JSTATE))
+#endif
 
           CALL GETMEM('XMAT','FREE','REAL',LXMAT,NXMAT)
           endif
@@ -294,7 +301,7 @@ C Finally, loop again over symmetries, transforming the CI:
             NXMAT=NASHT**2
             CALL GETMEM('XMAT','ALLO','REAL',LXMAT,NXMAT)
             CALL DCOPY_(NXMAT,0.0D0,0,WORK(LXMAT),1)
-            CALL MKXMAT_BIS(TORB,WORK(LXMAT))
+            CALL MKXMAT(TORB,WORK(LXMAT))
 
             CALL chemps2_tran2pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE))
             CALL chemps2_tran3pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE),

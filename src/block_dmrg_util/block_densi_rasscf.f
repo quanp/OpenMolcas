@@ -39,10 +39,14 @@
       Call DCOPY_(NACPR2,0.0D0,0,PA,1)
 *
       If(NACTEL.GT.1) Then
+#ifndef _NEW_BLOCK_
         Call block_load2pdm(NAC,PT,jRoot,jRoot)
-* No spin density is obtained from Spin-adapted DMRG (Block's default)
-* TODO: 1-El density matrix should be computed with spin-orbital index
-*       to store spin density with Block code...
+#endif
+
+#ifdef _NEW_BLOCK_
+        Call block_load2pdm_txt(NAC, PT, jRoot, .FALSE.)
+#endif
+
         IJ_pack=1
         Do J=1,NAC
           Do I=1,J
@@ -77,7 +81,9 @@
         End Do
       Else
 * special case for NACTEL = 1
+#ifndef _NEW_BLOCK_
         Call block_load1pdm(NAC,PT,jRoot,jRoot)
+#endif
         IJ_pack=1
         Do J=1,NAC
           Do I=1,J

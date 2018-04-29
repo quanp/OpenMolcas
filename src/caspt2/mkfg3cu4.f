@@ -33,7 +33,9 @@
       REAL*8, INTENT(OUT) :: F1(NLEV,NLEV),F2(NLEV,NLEV,NLEV,NLEV)
       REAL*8, INTENT(OUT) :: G3(*), F3(*)
       INTEGER*1, INTENT(IN) :: idxG3(6,*)
-      REAL*8, INTENT(IN) :: W3(NLEV,NLEV,NLEV,NLEV)
+      REAL*8, INTENT(INOUT) :: W3(NLEV,NLEV,NLEV,NLEV)
+      REAL*8 :: G3T(NLEV,NLEV,NLEV,NLEV,NLEV,NLEV)
+
 *
       REAL*8  G1SUM
       INTEGER IT,IU,IV,IX,IY,IZ,IW
@@ -46,7 +48,11 @@
 *
       If(NACTEL.GT.1) Then
 * load 2-el density matrix
-        Call block_load2pdm(nlev,G2,jstate,jstate)
+#ifndef _NEW_BLOCK_
+        Call block_load2pdm(nlev,G2,mstate(jstate),mstate(jstate))
+#elif _NEW_BLOCK_
+        Call block_load2pdm_txt(nlev,G2,mstate(jstate),.TRUE.)
+#endif
 * compute 1-el density matrix from 2-el density matrix
         Do iu=1,nlev
           Do it=1,nlev
@@ -61,7 +67,9 @@
         End Do
       Else
 * special case for NACTEL = 1
-        Call block_load1pdm(nlev,G1,jstate,jstate)
+#ifndef _NEW_BLOCK_
+       Call block_load1pdm(nlev,G1,jstate,jstate)
+#endif
       End If
 *
       Do iz=1,nlev
@@ -79,12 +87,20 @@
 * skip 3RDM part if NACTEL <= 2
       If(NACTEL.LE.2) GoTo 999
 
+#ifdef _NEW_BLOCK_
+      Call block_load3pdm_txt(nlev,G3T,mstate(jstate),.TRUE.)
+#endif
       Do iz=1,nlev
         izSym=ism(iz)
         Do iy=1,nlev
           iyzSym=Mul(ism(iy),izSym)
 * load 3PDM of which is G3(:,:,:,:,iy,iz)
-          Call block_load3pdm2f(nlev,W3,jstate,jstate,iy,iz)
+#ifndef _NEW_BLOCK_
+          Call block_load3pdm2f(nlev,W3,mstate(jstate),
+     &                           mstate(jstate),iy,iz)
+#elif _NEW_BLOCK_
+          W3 = G3T(:,:,:,:,iy,iz)
+#endif
           If(IFF.NE.0) Then
             Do ix=1,nlev
               ixyzSym=Mul(ism(ix),iyzSym)

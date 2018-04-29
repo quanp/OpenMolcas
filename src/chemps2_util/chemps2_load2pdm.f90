@@ -14,7 +14,7 @@
 ! Subroutine to load 2RDM
 ! Written by Quan Phung and Sebastian Wouters, Leuven, Aug 2016
 
-subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
+subroutine chemps2_load2pdm( NAC, PT, CHEMROOT, TRANS )
 
   USE HDF5
   USE ISO_C_BINDING
@@ -25,15 +25,17 @@ subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
   IMPLICIT NONE
   INTEGER, INTENT(IN) :: NAC, CHEMROOT
   REAL*8, INTENT(OUT) :: PT( NAC, NAC, NAC, NAC )
+  LOGICAL, INTENT(IN) :: TRANS
 
   CHARACTER(LEN=30) :: file_2rdm
+  CHARACTER(LEN=50) :: imp
 
   INTEGER( HID_T )   :: file_h5, group_h5, space_h5, dset_h5 ! Handles
   INTEGER(4)         :: hdferr
   TYPE( C_PTR )      :: f_ptr
   LOGICAL            :: irdm
 
-  INTEGER :: i,j,k,l,idx
+  INTEGER :: i,j,k,l,idx,ierr
   character(len=10) :: rootindex
 #ifdef _MOLCAS_MPP_
   EXTERNAL Is_Real_Par, KING
@@ -44,18 +46,28 @@ subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
   REAL*8, DIMENSION( 1 : NAC * NAC * NAC * NAC ), TARGET :: two_rdm
 
   write(rootindex,"(I2)") chemroot-1
-  file_2rdm="molcas_2rdm.h5.r"//trim(adjustl(rootindex))
+
+  if (trans) then
+    file_2rdm="molcas_2rdm.h5.r"//trim(adjustl(rootindex))//".tran"
+  else
+    file_2rdm="molcas_2rdm.h5.r"//trim(adjustl(rootindex))
+  endif
+
   file_2rdm=trim(adjustl(file_2rdm))
   call f_inquire(file_2rdm, irdm)
   if (.NOT. irdm) then
-     write(6,'(1X,A15,I3,A16)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 2RDM file'
-     call abend()
+#ifdef _MOLCAS_MPP_
+     if ( KING() ) then
+       write(6,'(1X,A15,I3,A16)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 2RDM file'
+       call abend()
+     endif
+#endif
+     imp="ln -sf ../" // file_2rdm // " ."
+     imp=trim(adjustl(imp))
+     call systemf(imp,iErr)
+     write(6,'(1X,A46)') 'CHEMPS2> Automatically symbolic link 2RDM file'
   endif
 
-
-!#ifdef _MOLCAS_MPP_
-!  if ( MPP().AND.KING() ) then
-!#endif
 
   CALL h5open_f( hdferr )
   CALL h5fopen_f( file_2rdm, H5F_ACC_RDONLY_F, file_h5, hdferr )
@@ -68,11 +80,6 @@ subroutine chemps2_load2pdm( NAC, PT, CHEMROOT )
   CALL h5sclose_f( space_h5, hdferr )
   CALL h5gclose_f( group_h5, hdferr )
   CALL h5fclose_f( file_h5,  hdferr )
-!#ifdef _MOLCAS_MPP_
-!  end if
-!  call MPI_Bcast( two_rdm, NAC * NAC * NAC * NAC, MPI_DOUBLE_PRECISION, 0,     MPI_COMM_WORLD, IERROR4 )
-!#endif
-
 
   do i=1,NAC
      do j=1,NAC

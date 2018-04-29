@@ -50,7 +50,7 @@
       Character*3 lIrrep(8)
       Character*80 Note
       Character*120 Line
-#ifdef _ENABLE_CHEMPS2_DMRG_
+#if defined _ENABLE_BLOCK_DMRG_ || defined _ENABLE_CHEMPS2_DMRG_
       Character*3 SNAC
 #endif
       Logical FullMlk, get_BasisType
@@ -208,8 +208,10 @@ C Local print level (if any)
      &                           NROOTS
 #ifdef _ENABLE_BLOCK_DMRG_
       if (DoBlockDMRG) then
-      Write(LF,Fmt2//'A,T45,T100)')'Occupation guess',
-     &                           BLOCKOCC
+      write(SNAC, '(I3)') NAC
+      Write(LF,Fmt2//'A,T45,'//trim(adjustl(SNAC))//'I2)')
+     &                           'Occupation guess',
+     &                           (HFOCC(ihfocc), ihfocc=1,NAC)
       endif
 #endif
 

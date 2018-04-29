@@ -31,7 +31,7 @@
       Call DCOPY_(NACPR2,0.0D0,0,PA,1)
 *
       If(NACTEL.GT.1) Then
-        Call chemps2_load2pdm(NAC,PT,jRoot)
+        Call chemps2_load2pdm(NAC,PT,jRoot,.FALSE.)
         IJ_pack=1
         Do J=1,NAC
           Do I=1,J
