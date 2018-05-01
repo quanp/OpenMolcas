@@ -25,9 +25,12 @@ subroutine dice_load2pdm( NAC, PT, CHEMROOT )
   INTEGER :: nact, isFreeUnit
   character(len=10) :: rootindex
 
+  INTEGER :: nac4
+
   external isFreeUnit
 
-  call dcopy_(nac**4,0.0d0,0,PT,1)
+  nac4 = nac**4
+  call dcopy_(nac4,0.0d0,0,PT,1)
 !  PT = 0.0d0
 
   write(rootindex,"(I2)") chemroot-1

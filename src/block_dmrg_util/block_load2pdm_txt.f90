@@ -19,6 +19,7 @@ subroutine block_load2pdm_txt( NAC, PT, CHEMROOT, TRANS )
   REAL*8, INTENT(OUT) :: PT( NAC, NAC, NAC, NAC )
   LOGICAL, INTENT(IN) :: TRANS
   REAL*8 :: PTtemp
+  INTEGER :: nac4
 
   CHARACTER(LEN=50) :: file_2rdm
 
@@ -28,7 +29,8 @@ subroutine block_load2pdm_txt( NAC, PT, CHEMROOT, TRANS )
 
   external isFreeUnit
 
-  call dcopy_(nac**4,0.0d0,0,PT,1)
+  nac4 = nac**4
+  call dcopy_(nac4,0.0d0,0,PT,1)
 !  PT = 0.0d0
 
   write(rootindex,"(I2)") chemroot-1
@@ -54,7 +56,7 @@ subroutine block_load2pdm_txt( NAC, PT, CHEMROOT, TRANS )
 ! i.e. G(i,j,k,l) = <i,k,l,j>
 ! Scale by 2.0 since Block calculates 1/2
 
-  do i=1,nact**4
+  do i=1,nac4
     read(LU,*) idx1, idx2, idx3, idx4, PTtemp
     PT( idx1+1, idx4+1, idx2+1, idx3+1 ) = 2.0d0*PTtemp
   enddo

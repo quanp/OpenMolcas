@@ -55,6 +55,12 @@
       Parameter (ROUTINE='BLOCKCTL')
       Call qEnter(ROUTINE)
 
+C Local print level (if any)
+      IPRLEV=IPRLOC(3)
+      IF(IPRLEV.ge.DEBUG) THEN
+        WRITE(LF,*)' Entering ',ROUTINE
+      END IF
+
 #ifndef _NEW_BLOCK_
 
 * Default setting for the first iteraction

@@ -29,9 +29,18 @@
 #include "rasscf.fh"
 #include "general.fh"
 #include "WrkSpc.fh"
+#include "output_ras.fh"
 *
       Dimension D(NACPAR),DS(NACPAR),PS(NACPR2),PA(NACPR2)
       Dimension PT(NAC,NAC,NAC,NAC)
+      Parameter (ROUTINE='BLOCKDEN')
+      Call qEnter(ROUTINE)
+*
+*     Local print level (if any)
+      IPRLEV=IPRLOC(3)
+      IF(IPRLEV.ge.DEBUG) THEN
+        WRITE(LF,*)' Entering ',ROUTINE
+      END IF
 *
       Call DCOPY_(NACPAR,0.0D0,0,D, 1)
       Call DCOPY_(NACPAR,0.0D0,0,DS,1)
@@ -92,6 +101,8 @@
           End Do
         End Do
       End If
+
+      Call qExit(ROUTINE)
 
       RETURN
       END

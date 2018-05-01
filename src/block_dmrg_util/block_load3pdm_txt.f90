@@ -19,6 +19,7 @@ subroutine block_load3pdm_txt( NAC, PT, CHEMROOT, TRANS )
   REAL*8, INTENT(OUT) :: PT( NAC, NAC, NAC, NAC, NAC, NAC )
   LOGICAL, INTENT(IN) :: TRANS
   REAL*8 :: PTtemp
+  INTEGER :: nac6
 
   CHARACTER(LEN=50) :: file_3rdm
 
@@ -28,7 +29,8 @@ subroutine block_load3pdm_txt( NAC, PT, CHEMROOT, TRANS )
 
   external isFreeUnit
 
-  call dcopy_(nac**6,0.0d0,0,PT,1)
+  nac6 = nac**6
+  call dcopy_(nac6,0.0d0,0,PT,1)
 !  PT = 0.0d0
 
   write(rootindex,"(I2)") chemroot-1
