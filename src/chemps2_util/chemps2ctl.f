@@ -38,6 +38,8 @@
       character(len=100) :: imp1, imp2
       Integer :: iOper(0:7), ihfocc
 
+      character(2) :: curdir
+
 #ifdef _MOLCAS_MPP_
       Integer*4 IERROR4
       External King, Is_Real_Par
@@ -372,9 +374,21 @@
 
       close(LUCHEMIN)
 
+      if ( Is_Real_Par() ) then
+          CALL MPI_Barrier(MPI_COMM_WORLD, IERROR4)
+      end if
+
+! Check the current directory if it is NG (for numerical gradient)
+      call systemf('echo `pwd` | tail -c 3 > curdir',iErr)
+      LUCHEMIN=isFreeUnit(29)
+      call molcas_open(LUCHEMIN,'curdir')
+      read(LUCHEMIN,*) curdir
+      close(LUCHEMIN)
+
+
 #ifdef _MOLCAS_MPP_
       write(6,'(1X,A21,I3)') 'CHEMPS2> ITERATION : ', ITER
-      if ( KING() ) then
+      if ( KING() .OR. curdir == 'NG') then
 #endif
 
 ! Quan: overwrite CheMPS2_xxxorb_MPSX.h5 to CheMPS2_MPSX.h5
@@ -466,7 +480,8 @@
       end if
 
 !Quan: FIXME: softlink all the n-RDM files
-      if ( Is_Real_Par().AND.( KING().EQV..false. ) ) then
+      if ( Is_Real_Par().AND.( KING().EQV..false. .AND. curdir/='NG') )
+     &  then
         do chemroot=1,lroots
           write(rootindex,"(I2)") chemroot-1
           imp1="ln -sf ../molcas_2rdm.h5.r"//
