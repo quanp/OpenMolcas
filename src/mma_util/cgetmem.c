@@ -869,11 +869,11 @@ INT c_getmem_kern(INT *op, mentry *tmp, INT *offset, INT *len) {
              break;
             }
         case FLUS:
-            printf("**************************************************\n");
-            printf("MEMORY WARNING: use of FLUSH operation deprecated!\n");
-            printf("please contact the developer of this module and\n");
-            printf("ask him/her to fix this!\n");
-            printf("**************************************************\n");
+//            printf("**************************************************\n");
+//            printf("MEMORY WARNING: use of FLUSH operation deprecated!\n");
+//            printf("please contact the developer of this module and\n");
+//            printf("ask him/her to fix this!\n");
+//            printf("**************************************************\n");
             flushMM(&MlM,MDATA,tmp);
             break;
         case RGST:
