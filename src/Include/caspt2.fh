@@ -15,11 +15,11 @@
       LOGICAL      lOPTO,RHSDIRECT,
      &    RFPERT,G1SECIN,PRORB,PRSD,Found2,IfDirect,IfChol,
      &    MODE_DGA_COMPAT,DoCumulant,JMS,DoTranRDM,doExactRDM,
-     &    doPoly2
+     &    doPoly2,DoApproRDM
       COMMON/INPL/ lOPTO,RHSDIRECT,
      &    RFPERT,G1SECIN,PRORB,PRSD,Found2,IfDirect,IfChol,
      &    MODE_DGA_COMPAT,DoCumulant,JMS,DoTranRDM,doExactRDM,
-     &    doPoly2
+     &    doPoly2,DoApproRDM
       REAL*8       THRCONV,THRSHN,THRSHS,THRSHF,THRENE,THROCC,
      &    POTNUC,ECORE,EREF,ERFSELF
       COMMON/INPR/ THRCONV,THRSHN,THRSHS,THRSHF,THRENE,THROCC,

@@ -43,7 +43,8 @@ INTEGER( HSIZE_T ) :: dimension
 INTEGER(4)         :: hdferr
 TYPE( C_PTR )      :: f_ptr
 
-integer :: i, j, k, l, m, n, iter, ind, iErr, jErr
+integer :: i, j, k, l, m, n, iter, ind
+logical :: iErr=.True., jErr=.True.
 integer :: ii, jj, kk, ll, p
 real(8), allocatable :: outrdm(:)
 real(8), allocatable :: tmprdm(:), tmprdm2(:)
@@ -72,13 +73,15 @@ file_3rdm  = "molcas_3rdm.h5.r"//trim(adjustl(rootindex))
 file_f4rdm ="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))
 
 file_3rdm  = trim(adjustl( file_3rdm))
-file_f4rdm = trim(adjustl(file_f4rdm))
-
 call f_inquire( file_3rdm, iErr)
-call f_inquire(file_f4rdm, jErr)
+
+If (TRAN3RDM.EQV..false.) Then
+  file_f4rdm = trim(adjustl(file_f4rdm))
+  call f_inquire(file_f4rdm, jErr)
+endif
 
 if ((.NOT. iErr) .OR. (.NOT. jErr)) then
-  write(6,'(1X,A15,I3,A16)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
+  write(6,'(1X,A15,I3,A26)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
   call abend()
 endif
 

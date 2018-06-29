@@ -168,6 +168,8 @@ C are not supported with stdalloc. Hence, the infraction.
       Logical :: DoTranRDM = .False.
       ! CHEM
       Logical :: doExactRDM = .False.
+      ! CHCU
+      Logical :: doApproRDM = .False.
       End Type
 
 #ifdef ALLOC_SCAL
@@ -568,6 +570,9 @@ C as if the values were read directly from the file.
 
       Case('CHTR')
       Input % DoTranRDM = .True.
+
+      Case('CHCU')
+      Input % doApproRDM = .True.
 #endif
 
       Case('EFFE')

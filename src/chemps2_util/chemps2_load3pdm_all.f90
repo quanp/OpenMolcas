@@ -14,7 +14,7 @@
 ! Subroutine to load 3-RDM and F4-RDM
 ! Written by Quan Phung and Sebastian Wouters, Leuven, Aug 2016
 
-subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot, trans )
+subroutine chemps2_load3pdm_all( NAC, G3T, chemroot, trans )
 
   USE HDF5
   USE ISO_C_BINDING
@@ -23,17 +23,12 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
 #endif
 
   IMPLICIT NONE
-  INTEGER, INTENT(IN)   :: NAC, NG3, chemroot
-  INTEGER*1, INTENT(IN) :: idxG3( 6, NG3 )
-  REAL*8, INTENT(OUT)   :: storage(*)
-  LOGICAL, INTENT(IN)   :: doG3
-  REAL*8, INTENT(IN)    :: EPSA( NAC )
-  REAL*8, INTENT(OUT)   :: F2 ( NAC, NAC, NAC, NAC )
+  INTEGER, INTENT(IN)   :: NAC, chemroot
   LOGICAL, INTENT(IN)   :: trans
+  REAL*8, INTENT(OUT)   :: G3T(NAC, NAC, NAC, NAC, NAC, NAC)
 
   CHARACTER(LEN=30) :: file_3rdm
-  CHARACTER(LEN=30) :: file_f4rdm
-  LOGICAL           :: irdm=.True., jrdm=.True.
+  LOGICAL           :: irdm, jrdm
   CHARACTER(LEN=50) :: imp
 
   INTEGER( HID_T )   :: file_h5, group_h5, space_h5, dset_h5 ! Handles
@@ -55,24 +50,16 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
 
   if (trans) then
     file_3rdm="molcas_3rdm.h5.r"//trim(adjustl(rootindex))//".tran"
-    file_f4rdm="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))//".tran"
   else
     file_3rdm="molcas_3rdm.h5.r"//trim(adjustl(rootindex))
-    file_f4rdm="molcas_f4rdm.h5.r"//trim(adjustl(rootindex))
   endif
 
   file_3rdm=trim(adjustl(file_3rdm))
   call f_inquire(file_3rdm, irdm)
-
-  If (doG3.EQV..false.) Then
-    file_f4rdm=trim(adjustl(file_f4rdm))
-    call f_inquire(file_f4rdm, jrdm)
-  endif
-
-  if ((.NOT. irdm) .OR. (.NOT. jrdm)) then
+  if ((.NOT. irdm)) then
 #ifdef _MOLCAS_MPP_
      if ( KING() ) then
-       write(6,'(1X,A15,I3,A26)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
+       write(6,'(1X,A15,I3,A16)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM file'
        call abend()
      endif
 #endif
@@ -81,22 +68,11 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
      call systemf(imp,iErr)
      write(6,'(1X,A46)') 'CHEMPS2> Automatically symbolic link 3RDM file'
 
-     If (doG3.EQV..false.) Then
-       imp="ln -sf ../" // file_f4rdm // " ."
-       imp=trim(adjustl(imp))
-       call systemf(imp,iErr)
-       write(6,'(1X,A47)') 'CHEMPS2> Automatically symbolic link F4RDM file'
-     endif
   endif
 
   CALL h5open_f( hdferr )
-  If (doG3.EQV..true.) Then
-    CALL h5fopen_f( file_3rdm, H5F_ACC_RDONLY_F, file_h5, hdferr )
-    CALL h5gopen_f( file_h5, "3-RDM", group_h5, hdferr )
-  Else
-    CALL h5fopen_f( file_f4rdm, H5F_ACC_RDONLY_F, file_h5, hdferr )
-    CALL h5gopen_f( file_h5, "F.4-RDM", group_h5, hdferr )
-  End If
+  CALL h5fopen_f( file_3rdm, H5F_ACC_RDONLY_F, file_h5, hdferr )
+  CALL h5gopen_f( file_h5, "3-RDM", group_h5, hdferr )
   CALL h5dopen_f( group_h5, "elements", dset_h5, hdferr )
   CALL h5dget_space_f( dset_h5, space_h5, hdferr )
   f_ptr = C_LOC( buffer( 1 ) )
@@ -106,30 +82,19 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
   CALL h5gclose_f( group_h5, hdferr )
   CALL h5fclose_f( file_h5,  hdferr )
 
-  do iG3=1,NG3
-    ip1 = idxG3( 1, iG3 ) - 1
-    iq1 = idxG3( 2, iG3 ) - 1
-    ip2 = idxG3( 3, iG3 ) - 1
-    iq2 = idxG3( 4, iG3 ) - 1
-    ip3 = idxG3( 5, iG3 ) - 1
-    iq3 = idxG3( 6, iG3 ) - 1
-    idx = ip1 + NAC * ( ip2 + NAC * ( ip3 + NAC * ( iq1 + NAC * ( iq2 + NAC * iq3 ) ) ) )
-    storage( iG3 ) = buffer( 1 + idx )
-  end do
+  do ip1=0,NAC-1
+    do ip2=0,NAC-1
+      do ip3=0,NAC-1
+        do iq1=0,NAC-1
+          do iq2=0,NAC-1
+            do iq3=0,NAC-1
+              idx = ip1 + NAC * ( ip2 + NAC * ( ip3 + NAC * ( iq1 + NAC * ( iq2 + NAC * iq3 ) ) ) )
+              G3T(ip1+1, iq1+1, ip2+1, iq2+1, ip3+1, iq3+1 ) = buffer( 1 + idx )
+            enddo
+          enddo
+        enddo
+      enddo
+    enddo
+  enddo
 
-  if (doG3.EQV..true.) Then
-    do iq2=1,NAC
-      do ip2=1,NAC
-        do iq1=1,NAC
-          do ip1=1,NAC
-            F2( ip1, iq1, ip2, iq2 ) = 0.0
-            do ip3=1,NAC
-              idx = ip1 + NAC * ( ip2 - 1 + NAC * ( ip3 - 1 + NAC * ( iq1 - 1 + NAC * ( iq2 - 1 + NAC * ( ip3 - 1 ) ) ) )  )
-              F2( ip1, iq1, ip2, iq2 ) = F2( ip1, iq1, ip2, iq2 ) + EPSA( ip3 ) * buffer( idx )
-            end do
-          end do
-        end do
-      end do
-    end do
-  end if
 end subroutine

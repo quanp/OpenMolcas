@@ -363,7 +363,11 @@
       If (IFINAL.EQ.2 .AND. Do3RDM .AND. NACTEL.GT.2) Then
          write(6,*)  'CHEMPS2> Running 3-RDM and F.4-RDM'
          write(LUCHEMIN,*) 'MOLCAS_3RDM    = molcas_3rdm.h5'
-         write(LUCHEMIN,*) 'MOLCAS_F4RDM   = molcas_f4rdm.h5'
+         if (chemps2_no4rdm) then
+           write(6,*)  'CHEMPS2> Disable F.4-RDM'
+         else
+           write(LUCHEMIN,*) 'MOLCAS_F4RDM   = molcas_f4rdm.h5'
+         endif
          write(LUCHEMIN,*) 'MOLCAS_FOCK    = FOCK_CHEMPS2'
       endif
 

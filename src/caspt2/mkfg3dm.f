@@ -565,6 +565,62 @@ C     so make sure that the _total_ fingerprint is computed
         WRITE(6,'("DEBUG> ",A,1X,ES21.14)') "F1:", dF1
         WRITE(6,'("DEBUG> ",A,1X,ES21.14)') "F2:", dF2
         WRITE(6,'("DEBUG> ",A,1X,ES21.14)') "F3:", dF3
+
+!Quan: DB
+!        do it=1,NLEV
+!          do iu=1,NLEV
+!            write(6,*) 'DMRG: DB> G1 ', it, iu, G1(it, iu)
+!          enddo
+!        enddo
+
+!        write(6,*) '-----------------------------------'
+
+!        do it=1,NLEV
+!          do iu=1,NLEV
+!            write(6,*) 'DMRG: DB> F1 ', it, iu, F1(it, iu)
+!          enddo
+!        enddo
+
+!        write(6,*) '-----------------------------------'
+
+!        do it=1,NLEV
+!          do iu=1,NLEV
+!            do iv=1,NLEV
+!              do ix=1,NLEV
+!                write(6,*) 'DMRG: DB> G2 ',
+!     &                      it, iu, iv, ix, G2(it, iu, iv, ix)
+!              enddo
+!            enddo
+!          enddo
+!        enddo
+
+!        write(6,*) '-----------------------------------'
+
+!        do it=1,NLEV
+!          do iu=1,NLEV
+!            do iv=1,NLEV
+!              do ix=1,NLEV
+!                write(6,*) 'DMRG: DB> F2 ',
+!     &                      it, iu, iv, ix, F2(it, iu, iv, ix)
+!              enddo
+!            enddo
+!          enddo
+!        enddo
+
+!        write(6,*) '-----------------------------------'
+
+!        do it=1,NG3
+!            write(6,*) 'DMRG: DB> G3 ', it, G3(it)
+!        enddo
+
+!        write(6,*) '-----------------------------------'
+
+!        do it=1,NG3
+!            write(6,*) 'DMRG: DB> F3 ', it, F3(it)
+!        enddo
+
+!        write(6,*) '-----------------------------------'
+
       ENDIF
 
  999  continue

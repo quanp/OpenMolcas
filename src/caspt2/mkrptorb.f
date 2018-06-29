@@ -306,8 +306,10 @@ C Finally, loop again over symmetries, transforming the CI:
             CALL chemps2_tran2pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE))
             CALL chemps2_tran3pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE),
      &                            .TRUE.)
+            if (DoApproRDM.EQV..False.) then
             CALL chemps2_tran3pdm(NASHT,WORK(LXMAT),MSTATE(JSTATE),
      &                           .FALSE.)
+            endif
             CALL GETMEM('XMAT','FREE','REAL',LXMAT,NXMAT)
 
           else
