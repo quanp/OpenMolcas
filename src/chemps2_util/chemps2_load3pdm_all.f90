@@ -8,11 +8,9 @@
 ! For more details see the full text of the license in the file        *
 ! LICENSE or in <http://www.gnu.org/licenses/>.                        *
 !                                                                      *
-! Copyright (C) 2016, Sebastian Wouters                                *
-!               2016, Quan Phung                                       *
+! Copyright (C) 2018, Quan Phung                                       *
 !***********************************************************************
-! Subroutine to load 3-RDM and F4-RDM
-! Written by Quan Phung and Sebastian Wouters, Leuven, Aug 2016
+! Subroutine to load all elements of 3-RDM
 
 subroutine chemps2_load3pdm_all( NAC, G3T, chemroot, trans )
 
