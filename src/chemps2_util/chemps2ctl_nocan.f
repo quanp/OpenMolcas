@@ -102,9 +102,16 @@
 *************************
 *  WRITEOUT INPUT FILE  *
 *************************
+! Check the current directory if it is NG (for numerical gradient)
+      call systemf('echo `pwd` | tail -c 3 > curdir',iErr)
+      LUCHEMIN=isFreeUnit(29)
+      call molcas_open(LUCHEMIN,'curdir')
+      read(LUCHEMIN,*) curdir
+      close(LUCHEMIN)
+
 
 #ifdef _MOLCAS_MPP_
-      if ( KING() ) then
+      if ( KING() .OR. curdir == 'NG' ) then
 #endif
       IF (IRST.EQ.0) THEN
 ! Cleanup chemps2.log.total
@@ -370,13 +377,6 @@
           CALL MPI_Barrier(MPI_COMM_WORLD, IERROR4)
       end if
 
-! Check the current directory if it is NG (for numerical gradient)
-      call systemf('echo `pwd` | tail -c 3 > curdir',iErr)
-      LUCHEMIN=isFreeUnit(29)
-      call molcas_open(LUCHEMIN,'curdir')
-      read(LUCHEMIN,*) curdir
-      close(LUCHEMIN)
-
 
 #ifdef _MOLCAS_MPP_
       write(6,'(1X,A21,I3)') 'CHEMPS2> ITERATION : ', ITER
@@ -441,6 +441,14 @@
           call systemf(imp1,iErr)
           imp1="ln -sf ../molcas_f4rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
+          call systemf(imp1,iErr)
+          imp1="ln -sf ../CheMPS2_natorb_MPS0.h5 ."
+          call systemf(imp1,iErr)
+          imp1="ln -sf ../CheMPS2_canorb_MPS0.h5 ."
+          call systemf(imp1,iErr)
+          imp1="ln -sf ../molcas_natorb_fiedler.txt ."
+          call systemf(imp1,iErr)
+          imp1="ln -sf ../molcas_canorb_fiedler.txt ."
           call systemf(imp1,iErr)
         enddo
         call systemf("ln -sf ../chemps2.log .",iErr)
