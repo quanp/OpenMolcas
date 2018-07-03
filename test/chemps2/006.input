@@ -78,6 +78,8 @@ MaxIterations
 IPEA
 0.0
 CHEMPS2
+MULTistate
+1 1
 End of input
 *-------------------------------------------------------------------------------
 >>FILE checkfile
