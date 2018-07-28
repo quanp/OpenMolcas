@@ -325,6 +325,8 @@ C.. for GAS
      &                           chemps2_restart
       Write(LF,Fmt2//'A,T45,L6)')'Calculate 3-RDM and F.4-RDM',
      &                           Do3RDM
+      Write(LF,Fmt2//'A,T45,L6)')'Disable F.4-RDM',
+     &                           chemps2_no4rdm
       Write(LF,Fmt2//'A,T45,I6)')'Restart scheme in 3-RDM and F.4-RDM',
      &                           chemps2_lrestart
       write(SNAC, '(I3)') NAC

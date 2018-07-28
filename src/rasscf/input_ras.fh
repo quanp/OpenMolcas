@@ -13,7 +13,7 @@
       Integer LuInput
 * Used for input processing
       Integer NKeys
-      Parameter (NKeys=126)
+      Parameter (NKeys=127)
 *------------------------------------------------------
 * Logical flags, to check whether a keyword has been used
 * in the input:
@@ -44,7 +44,7 @@
      &     keyDMRE, keyMXCA, keyDEXS, keyHROO, KeyTDM,
      &     keyCHNO, keyDICE, keySTOC, keyEPSI, keySAMP,
      &     keyDITE, keyDIRE, keyCISO, keyT2ON, keyBLRE,
-     &     keyDIOC, KeyZZZZ
+     &     keyDIOC, keyNO4R, KeyZZZZ
 
       Common /InputFlags/ KeyAAAA,
      &     KeyALTE, KeyATOM, KeyAVER, KeyCHAR, KeyCHOI,
@@ -72,7 +72,7 @@
      &     keyDMRE, keyMXCA, keyDEXS, keyHROO, KeyTDM,
      &     keyCHNO, keyDICE, keySTOC, keyEPSI, keySAMP,
      &     keyDITE, keyDIRE, keyCISO, keyT2ON, keyBLRE,
-     &     keyDIOC, KeyZZZZ
+     &     keyDIOC, keyNO4R, KeyZZZZ
 
       Equivalence(KeyAAAA,KeyFlags(0))
 *------------------------------------------------------
@@ -103,7 +103,7 @@
      &           'DMRE','MXCA','DEXS','HROO','TDM ',
      &           'CHNO','DICE','STOC','EPSI','SAMP',
      &           'DITE','DIRE','CISO','T2ON','BLRE',
-     &           'DIOC'/
+     &           'DIOC','NO4R'/
 *------------------------------------------------------
 * Input data sets:
       Integer iCI_I,IROOT_I,NFRO_I,NISH_I,NRS1_I,NRS2_I,NRS3_I,NDEL_I,

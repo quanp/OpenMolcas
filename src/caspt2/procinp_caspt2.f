@@ -133,6 +133,7 @@ C     really parallel or not.
       DoCumulant = Input%DoCumulant
       DoTranRDM  = Input%DoTranRDM
       DoExactRDM = Input%DoExactRDM
+      DoApproRDM = Input%DoApproRDM
 
 ************************************************************************
 *

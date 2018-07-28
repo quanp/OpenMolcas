@@ -134,6 +134,12 @@
      &                      ' activated by 3RDM keyword in RASSCF'
            End If
 
+           If (DoApproRDM) then
+            write(6,Fmt1) 'This is a DMRG reference with appro 4-RDM,'//
+     &                    ' activated by 3RDM keyword in RASSCF'
+           endif
+
+
            If (DoExactRDM) then
             write(6,Fmt1) 'This is a DMRG reference with exact 4-RDM,'//
      &                    ' activated by 3RDM keyword in RASSCF'

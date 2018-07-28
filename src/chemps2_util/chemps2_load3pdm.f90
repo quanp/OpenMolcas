@@ -33,7 +33,7 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
 
   CHARACTER(LEN=30) :: file_3rdm
   CHARACTER(LEN=30) :: file_f4rdm
-  LOGICAL           :: irdm, jrdm
+  LOGICAL           :: irdm=.True., jrdm=.True.
   CHARACTER(LEN=50) :: imp
 
   INTEGER( HID_T )   :: file_h5, group_h5, space_h5, dset_h5 ! Handles
@@ -62,13 +62,17 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
   endif
 
   file_3rdm=trim(adjustl(file_3rdm))
-  file_f4rdm=trim(adjustl(file_f4rdm))
   call f_inquire(file_3rdm, irdm)
-  call f_inquire(file_f4rdm, jrdm)
+
+  If (doG3.EQV..false.) Then
+    file_f4rdm=trim(adjustl(file_f4rdm))
+    call f_inquire(file_f4rdm, jrdm)
+  endif
+
   if ((.NOT. irdm) .OR. (.NOT. jrdm)) then
 #ifdef _MOLCAS_MPP_
      if ( KING() ) then
-       write(6,'(1X,A15,I3,A16)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
+       write(6,'(1X,A15,I3,A26)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 3RDM or F.4RDM file'
        call abend()
      endif
 #endif
@@ -77,10 +81,12 @@ subroutine chemps2_load3pdm( NAC, idxG3, NG3, storage, doG3, EPSA, F2, chemroot,
      call systemf(imp,iErr)
      write(6,'(1X,A46)') 'CHEMPS2> Automatically symbolic link 3RDM file'
 
-     imp="ln -sf ../" // file_f4rdm // " ."
-     imp=trim(adjustl(imp))
-     call systemf(imp,iErr)
-     write(6,'(1X,A47)') 'CHEMPS2> Automatically symbolic link F4RDM file'
+     If (doG3.EQV..false.) Then
+       imp="ln -sf ../" // file_f4rdm // " ."
+       imp=trim(adjustl(imp))
+       call systemf(imp,iErr)
+       write(6,'(1X,A47)') 'CHEMPS2> Automatically symbolic link F4RDM file'
+     endif
   endif
 
   CALL h5open_f( hdferr )

@@ -37,6 +37,7 @@ INTEGER(4)         :: hdferr
 TYPE( C_PTR )      :: f_ptr
 
 integer :: i, j, k, l, ind, ITER, iErr
+logical :: irdm
 integer :: ii, jj, kk, ll, p
 real(8), allocatable :: outrdm(:)
 real(8), allocatable :: tmprdm(:), tmprdm2(:)
@@ -60,8 +61,8 @@ nact4 = nact3 * nact
 write(rootindex,"(I2)") chemroot-1
 file_2rdm="molcas_2rdm.h5.r"//trim(adjustl(rootindex))
 file_2rdm=trim(adjustl(file_2rdm))
-call f_inquire(file_2rdm, iErr)
-if (.NOT. iErr) then
+call f_inquire(file_2rdm, irdm)
+if (.NOT. irdm) then
   write(6,'(1X,A15,I3,A16)') 'CHEMPS2> Root: ',CHEMROOT,' :: No 2RDM file'
   call abend()
 endif

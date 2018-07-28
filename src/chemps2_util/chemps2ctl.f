@@ -38,6 +38,8 @@
       character(len=100) :: imp1, imp2
       Integer :: iOper(0:7), ihfocc
 
+      character(2) :: curdir
+
 #ifdef _MOLCAS_MPP_
       Integer*4 IERROR4
       External King, Is_Real_Par
@@ -98,8 +100,15 @@
 *  WRITEOUT INPUT FILE  *
 *************************
 
+! Check the current directory if it is NG (for numerical gradient)
+      call systemf('echo `pwd` | tail -c 3 > curdir',iErr)
+      LUCHEMIN=isFreeUnit(29)
+      call molcas_open(LUCHEMIN,'curdir')
+      read(LUCHEMIN,*) curdir
+      close(LUCHEMIN)
+
 #ifdef _MOLCAS_MPP_
-      if ( KING() ) then
+      if ( KING() .OR. curdir == 'NG' ) then
 #endif
       IF (IRST.EQ.0) THEN
 ! Cleanup chemps2.log.total
@@ -361,7 +370,11 @@
       If (IFINAL.EQ.2 .AND. Do3RDM .AND. NACTEL.GT.2) Then
          write(6,*)  'CHEMPS2> Running 3-RDM and F.4-RDM'
          write(LUCHEMIN,*) 'MOLCAS_3RDM    = molcas_3rdm.h5'
-         write(LUCHEMIN,*) 'MOLCAS_F4RDM   = molcas_f4rdm.h5'
+         if (chemps2_no4rdm) then
+           write(6,*)  'CHEMPS2> Disable F.4-RDM'
+         else
+           write(LUCHEMIN,*) 'MOLCAS_F4RDM   = molcas_f4rdm.h5'
+         endif
          write(LUCHEMIN,*) 'MOLCAS_FOCK    = FOCK_CHEMPS2'
       endif
 
@@ -372,9 +385,15 @@
 
       close(LUCHEMIN)
 
+      if ( Is_Real_Par() ) then
+          CALL MPI_Barrier(MPI_COMM_WORLD, IERROR4)
+      end if
+
+
+
 #ifdef _MOLCAS_MPP_
       write(6,'(1X,A21,I3)') 'CHEMPS2> ITERATION : ', ITER
-      if ( KING() ) then
+      if ( KING() .OR. curdir == 'NG') then
 #endif
 
 ! Quan: overwrite CheMPS2_xxxorb_MPSX.h5 to CheMPS2_MPSX.h5
@@ -466,7 +485,8 @@
       end if
 
 !Quan: FIXME: softlink all the n-RDM files
-      if ( Is_Real_Par().AND.( KING().EQV..false. ) ) then
+      if ( Is_Real_Par().AND.( KING().EQV..false. .AND. curdir/='NG') )
+     &  then
         do chemroot=1,lroots
           write(rootindex,"(I2)") chemroot-1
           imp1="ln -sf ../molcas_2rdm.h5.r"//
@@ -477,6 +497,14 @@
           call systemf(imp1,iErr)
           imp1="ln -sf ../molcas_f4rdm.h5.r"//
      &           trim(adjustl(rootindex))//" ."
+          call systemf(imp1,iErr)
+          imp1="ln -sf ../CheMPS2_natorb_MPS0.h5 ."
+          call systemf(imp1,iErr)
+          imp1="ln -sf ../CheMPS2_canorb_MPS0.h5 ."
+          call systemf(imp1,iErr)
+          imp1="ln -sf ../molcas_natorb_fiedler.txt ."
+          call systemf(imp1,iErr)
+          imp1="ln -sf ../molcas_canorb_fiedler.txt ."
           call systemf(imp1,iErr)
         enddo
         call systemf("ln -sf ../chemps2.log .",iErr)
