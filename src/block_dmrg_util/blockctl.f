@@ -210,10 +210,10 @@ C Local print level (if any)
       write(LUTOTE,'(A5,I3)') 'irrep', lSymMolpro
       write(LUTOTE,*)
       write(LUTOTE,'(A13)') 'gaopt default'
-      write(LUTOTE,'(A18)') 'warmup local_4site'
+      write(LUTOTE,'(A7,A11)') 'warmup ', block_warmup
       write(LUTOTE,'(A7,I6)') 'maxiter', 50
       write(LUTOTE,'(A6)') 'twopdm'
-      write(LUTOTE,'(A11)') 'memory 10 g'
+      write(LUTOTE,'(A11)') 'memory 20 g'
 
 ! Always use restart option from 2nd iteration
       if (IRST>0 .or. blockrestart.EQV..TRUE.) then

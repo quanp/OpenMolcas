@@ -144,6 +144,7 @@ C   No changing about read in orbital information from INPORB yet.
       doDice      = .false.
       two2one     = 3
       blockrestart = .false.
+      block_warmup = 'local_4site'
 #ifdef _ENABLE_CHEMPS2_DMRG_
 ! Quan.16: CheMPS2 default flags
       chemps2_restart=.false.
@@ -2745,6 +2746,20 @@ c       write(6,*)          '  --------------------------------------'
        Read(LUInput,*,End=9910,Err=9920) two2one
        ReadStatus=' O.K. after reading data after T2ON keyword.'
        Call ChkIfKey()
+      End If
+*---  Process BLWU keyword: Block warmup
+      If (KeyBLWU) Then
+       If (DBG) Write(6,*) ' BLWU (Block warmup):'
+       Call SetPos(LUInput,'BLWU',Line,iRc)
+       If(iRc.ne._RC_ALL_IS_WELL_) GoTo 9810
+       ReadStatus=' Failure reading BLWU input.'
+       Read(LUInput,*,End=9910,Err=9920) Line
+       ReadStatus=' O.K. after reading BLWU input.'
+       Call UpCase(Line)
+       If ( Index(Line,'0SIT').ne.0 ) block_warmup='local_0site'
+       If ( Index(Line,'2SIT').ne.0 ) block_warmup='local_2site'
+       If ( Index(Line,'4SIT').ne.0 ) block_warmup='local_4site'
+       If ( Index(Line,'WILS').ne.0 ) block_warmup='wilson     '
       End If
 *---  Process 3RDM command --------------------------------------------*
       If (Key3RDM) Then

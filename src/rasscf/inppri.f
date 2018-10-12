@@ -304,6 +304,8 @@ C.. for GAS
       Write(LF,Fmt2//'A,T45,'//trim(adjustl(SNAC))//'I2)')
      &                           'Occupation guess',
      &                           (HFOCC(ihfocc), ihfocc=1,NAC)
+      Write(LF,Fmt2//'A,T45,A11)')'Warmup guess',
+     &                           block_warmup
       endif
 #endif
 
