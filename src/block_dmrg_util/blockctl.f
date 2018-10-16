@@ -45,7 +45,7 @@
       Integer iChMolpro(8)
       Character*3 Label
       character(len=150) :: imp1
-      character(len=3) :: block_nprocs, char_lroots
+      character(len=3) :: block_nprocs, char_lroots, block_nomp
 
 #include "rasdim.fh"
 #include "rasscf.fh"
@@ -214,6 +214,10 @@ C Local print level (if any)
       write(LUTOTE,'(A7,I6)') 'maxiter', 50
       write(LUTOTE,'(A6)') 'twopdm'
       write(LUTOTE,'(A11)') 'memory 20 g'
+
+      call get_environment_variable("OMP_NUM_THREADS",
+     &                                block_nomp, status=ierr)
+      write(LUTOTE,'(A10,A3)') 'num_thrds ', block_nomp
 
 ! Always use restart option from 2nd iteration
       if (IRST>0 .or. blockrestart.EQV..TRUE.) then
